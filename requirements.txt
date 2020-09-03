@@ -1,0 +1,17 @@
+numpy
+scipy
+scikit-learn
+opencv-python
+opencv-contrib-python
+tensorflow-gpu
+keras_applications
+matplotlib
+tqdm
+pillow
+mnn
+keras2onnx
+tf2onnx
+onnx
+onnxruntime
+pydensecrf
+labelme
