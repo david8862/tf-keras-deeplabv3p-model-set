@@ -17,7 +17,7 @@ from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lamb
 from tensorflow.keras.utils import get_source_inputs, get_file
 #from tensorflow.keras import backend as K
 
-from deeplabv3plus.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, SepConv_BN, ASPP_block, Decoder_block, normalize, img_resize
+from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, SepConv_BN, ASPP_block, Decoder_block, normalize, img_resize
 
 WEIGHTS_PATH_X = "https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5"
 

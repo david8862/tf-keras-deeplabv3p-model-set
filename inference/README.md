@@ -61,7 +61,7 @@ Refer to [Model dump](https://github.com/david8862/tf-keras-deeplabv3p-model-set
 * dump out inference model from training checkpoint:
 
     ```
-    # python deeplab.py --model_type=mobilenetv2 --weights_path=logs/000/<checkpoint>.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --dump_model --output_model_file=model.h5
+    # python deeplab.py --model_type=mobilenetv2_lite --weights_path=logs/000/<checkpoint>.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --dump_model --output_model_file=model.h5
     ```
 
 * convert keras .h5 model to tensorflow frozen pb model:
@@ -107,7 +107,7 @@ MNN support Post Training Integer quantization, so we can use its python CLI int
 Visualized segmentation result:
 
 <p align="center">
-  <img src="../assets/dog_inference.jpg">
+  <img src="../assets/dog_inference.png">
 </p>
 
 #### You can also use [eval.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set#evaluation) to do evaluation on the MNN model
@@ -180,7 +180,7 @@ Tensorflow-lite support both Float32 and UInt8 type model. We can dump out the k
 * dump out inference model from training checkpoint:
 
     ```
-    # python deeplab.py --model_type=mobilenetv2 --weights_path=logs/000/<checkpoint>.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --dump_model --output_model_file=model.h5
+    # python deeplab.py --model_type=mobilenetv2_lite --weights_path=logs/000/<checkpoint>.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --dump_model --output_model_file=model.h5
     ```
 
 * convert keras .h5 model to Float32 tflite model:

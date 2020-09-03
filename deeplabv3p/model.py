@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-create deeplabv3plus models
+create deeplabv3p models
 """
 from functools import partial
 from tensorflow.keras.layers import Conv2D, Reshape, Activation, Softmax, Lambda, Input
 from tensorflow.keras.models import Model
 
-from deeplabv3plus.models.deeplabv3p_xception import Deeplabv3pXception
-from deeplabv3plus.models.deeplabv3p_mobilenetv2 import Deeplabv3pMobileNetV2, Deeplabv3pLiteMobileNetV2
-from deeplabv3plus.models.deeplabv3p_mobilenetv3 import Deeplabv3pMobileNetV3Large, Deeplabv3pLiteMobileNetV3Large, Deeplabv3pMobileNetV3Small, Deeplabv3pLiteMobileNetV3Small
-from deeplabv3plus.models.deeplabv3p_resnet50 import Deeplabv3pResNet50
-from deeplabv3plus.models.layers import DeeplabConv2D, Subpixel, img_resize
+from deeplabv3p.models.deeplabv3p_xception import Deeplabv3pXception
+from deeplabv3p.models.deeplabv3p_mobilenetv2 import Deeplabv3pMobileNetV2, Deeplabv3pLiteMobileNetV2
+from deeplabv3p.models.deeplabv3p_mobilenetv3 import Deeplabv3pMobileNetV3Large, Deeplabv3pLiteMobileNetV3Large, Deeplabv3pMobileNetV3Small, Deeplabv3pLiteMobileNetV3Small
+from deeplabv3p.models.deeplabv3p_resnet50 import Deeplabv3pResNet50
+from deeplabv3p.models.layers import DeeplabConv2D, Subpixel, img_resize
 
 #
 # A map of model type to construction function for DeepLabv3+

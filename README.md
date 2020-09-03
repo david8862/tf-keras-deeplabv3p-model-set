@@ -185,9 +185,9 @@ optional arguments:
                         Whether to save checkpoint with best evaluation result
 ```
 
-Following is a reference config cmd for training mobilenetv2 backbone model on PascalVOC2012 & SBD dataset:
+Following is a reference config cmd for training mobilenetv2 lite model on PascalVOC2012 & SBD dataset:
 ```
-# python train.py --model_type=mobilenetv2 --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=8 --freeze_level=1 --transfer_epoch=5 --total_epoch=100 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
+# python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=8 --freeze_level=1 --transfer_epoch=5 --total_epoch=100 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
 ```
 
 Checkpoints during training could be found at `logs/000/`. Choose a best one as result
@@ -252,11 +252,11 @@ Some experiment on VOC2012+SBD dataset and comparison:
 
 image inference mode
 ```
-# python deeplab.py --model_type=mobilenetv2 --weights_path=model.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --image
+# python deeplab.py --model_type=mobilenetv2_lite --weights_path=model.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --image
 ```
 video inference mode
 ```
-# python deeplab.py --model_type=mobilenetv2 --weights_path=model.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --input=test.mp4
+# python deeplab.py --model_type=mobilenetv2_lite --weights_path=model.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --input=test.mp4
 ```
 For video detection mode, you can use "input=0" to capture live video from web camera and "output=<video name>" to dump out inference result to another video
 
@@ -309,7 +309,7 @@ New features, improvements and any other kind of contributions are warmly welcom
 
 
 # Citation
-Please cite keras-YOLOv3-model-set in your publications if it helps your research:
+Please cite tf-keras-deeplabv3p-model-set in your publications if it helps your research:
 ```
 @article{Keras-segmentation-deeplab-v3.1,
      Author = {Jenia Golbstein},

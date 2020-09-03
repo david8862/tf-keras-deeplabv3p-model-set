@@ -9,10 +9,10 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping, TerminateOnNaN
 
-from deeplabv3plus.model import get_deeplabv3p_model
-from deeplabv3plus.data import SegmentationGenerator
-from deeplabv3plus.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy
-from deeplabv3plus.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
+from deeplabv3p.model import get_deeplabv3p_model
+from deeplabv3p.data import SegmentationGenerator
+from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy
+from deeplabv3p.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
 from common.utils import get_classes, get_data_list, optimize_tf_gpu, calculate_weigths_labels, load_class_weights
 from common.model_utils import get_optimizer
 from common.callbacks import EvalCallBack
@@ -212,7 +212,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Model definition options
-    parser.add_argument('--model_type', type=str, required=False, default='mobilenetv2',
+    parser.add_argument('--model_type', type=str, required=False, default='mobilenetv2_lite',
         help='DeepLabv3+ model type: mobilenetv2/mobilenetv2_lite/xception, default=%(default)s')
     parser.add_argument('--weights_path', type=str, required=False, default=None,
         help = "Pretrained model/weights file for fine tune")

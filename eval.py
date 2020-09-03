@@ -21,9 +21,9 @@ import MNN
 import onnxruntime
 
 from common.utils import get_data_list, get_classes, get_custom_objects, optimize_tf_gpu, visualize_segmentation
-from deeplabv3plus.data import SegmentationGenerator
-from deeplabv3plus.metrics import mIOU
-from deeplabv3plus.postprocess_np import crf_postprocess
+from deeplabv3p.data import SegmentationGenerator
+from deeplabv3p.metrics import mIOU
+from deeplabv3p.postprocess_np import crf_postprocess
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 

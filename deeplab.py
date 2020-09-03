@@ -18,8 +18,8 @@ from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.utils import multi_gpu_model
 #from tensorflow_model_optimization.sparsity import keras as sparsity
 
-from deeplabv3plus.model import get_deeplabv3p_model
-from deeplabv3plus.postprocess_np import crf_postprocess
+from deeplabv3p.model import get_deeplabv3p_model
+from deeplabv3p.postprocess_np import crf_postprocess
 from common.utils import get_classes, optimize_tf_gpu, visualize_segmentation
 from common.data_utils import preprocess_image, mask_resize, mask_resize_fast
 

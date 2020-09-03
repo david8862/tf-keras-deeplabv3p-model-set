@@ -11,7 +11,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
-from deeplabv3plus.data import SegmentationGenerator
+from deeplabv3p.data import SegmentationGenerator
 from common.utils import get_data_list, get_custom_objects
 
 #tf.enable_eager_execution()

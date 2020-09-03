@@ -10,8 +10,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
-from deeplabv3plus.models.layers import normalize, img_resize
-from deeplabv3plus.models.deeplabv3p_mobilenetv3 import hard_sigmoid, hard_swish
+from deeplabv3p.models.layers import normalize, img_resize
+from deeplabv3p.models.deeplabv3p_mobilenetv3 import hard_sigmoid, hard_swish
 import tensorflow as tf
 
 
