@@ -17,7 +17,7 @@ from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lamb
 from tensorflow.keras.utils import get_source_inputs, get_file
 from tensorflow.keras import backend as K
 
-from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
+from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
 
 
 WEIGHTS_PATH = ('https://github.com/fchollet/deep-learning-models/'
