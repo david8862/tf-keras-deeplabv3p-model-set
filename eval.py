@@ -311,12 +311,10 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
     eval_generator = SegmentationGenerator(dataset_path, dataset,
                                             1,  #batch_size
                                             num_classes,
-                                            resize_shape=model_input_shape[::-1],
-                                            crop_shape=None,
+                                            target_size=model_input_shape[::-1],
                                             weighted_type=None,
                                             is_eval=True,
-                                            augment=False,
-                                            do_ahisteq=False)
+                                            augment=False)
 
     if model_format == 'MNN':
         #MNN inference engine need create session

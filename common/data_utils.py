@@ -123,6 +123,31 @@ def random_blur(image, prob=.5, size=5):
     return image
 
 
+def random_histeq(image, size=8, prob=.2):
+    """
+    Random apply "Contrast Limited Adaptive Histogram Equalization"
+    to image
+
+    # Arguments
+        image: origin image for histeq
+            numpy array containing image data
+        size: grid size for CLAHE,
+            scalar to control the grid size.
+        prob: probability for histeq,
+            scalar to control the histeq probability.
+
+    # Returns
+        image: adjusted numpy array image.
+    """
+    histeq = rand() < prob
+    if histeq:
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(size, size))
+        img_yuv = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+        img_yuv[:,:,0] = clahe.apply(img_yuv[:,:,0])
+        image = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR) # to BGR
+    return image
+
+
 def random_grayscale(image, prob=.2):
     """
     Random convert image to grayscale
@@ -212,7 +237,7 @@ def random_sharpness(image, jitter=.5):
     return image
 
 
-def random_zoom_rotate(image, label, rotate_range=0, zoom_range=0.2):
+def random_zoom_rotate(image, label, rotate_range=30, zoom_range=0.2, prob=0.3):
     """
     Random do zoom & rotate for image & label
 
@@ -238,7 +263,9 @@ def random_zoom_rotate(image, label, rotate_range=0, zoom_range=0.2):
     else:
         scale = 1.0
 
-    if rotate_range or zoom_range:
+    warpAffine = rand() < prob
+    if warpAffine and (rotate_range or zoom_range):
+    #if rotate_range or zoom_range:
         M = cv2.getRotationMatrix2D((image.shape[1]//2, image.shape[0]//2), angle, scale)
         image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]), flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
         label = cv2.warpAffine(label, M, (label.shape[1], label.shape[0]), flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
@@ -246,7 +273,7 @@ def random_zoom_rotate(image, label, rotate_range=0, zoom_range=0.2):
     return image, label
 
 
-def random_crop(image, label, crop_shape):
+def random_crop(image, label, crop_shape, prob=.1):
     """
     Random crop a specific size area from image
     and label
@@ -258,23 +285,30 @@ def random_crop(image, label, crop_shape):
             numpy array containing segment label mask
         crop_shape: target crop shape,
             list or tuple in (width, height).
+        prob: probability for crop,
+            scalar to control the crop probability.
 
     # Returns
         image: croped numpy array image.
         label: croped numpy array label mask
     """
+    # check if the image and label are same shape
     if (image.shape[0] != label.shape[0]) or (image.shape[1] != label.shape[1]):
         raise Exception('Image and label must have the same dimensions!')
 
-    if (crop_shape[0] < image.shape[1]) and (crop_shape[1] < image.shape[0]):
-        x = random.randrange(image.shape[1]-crop_shape[0])
-        y = random.randrange(image.shape[0]-crop_shape[1])
+    crop = rand() < prob
+    if crop:
+        if (crop_shape[0] < image.shape[1]) and (crop_shape[1] < image.shape[0]):
+            x = random.randrange(image.shape[1]-crop_shape[0])
+            y = random.randrange(image.shape[0]-crop_shape[1])
 
-        return image[y:y+crop_shape[1], x:x+crop_shape[0], :], label[y:y+crop_shape[1], x:x+crop_shape[0]]
-    else:
-        image = cv2.resize(image, crop_shape)
-        label = cv2.resize(label, crop_shape, interpolation = cv2.INTER_NEAREST)
-        return image, label
+            image = image[y:y+crop_shape[1], x:x+crop_shape[0], :]
+            label = label[y:y+crop_shape[1], x:x+crop_shape[0]]
+        else:
+            image = cv2.resize(image, crop_shape)
+            label = cv2.resize(label, crop_shape, interpolation = cv2.INTER_NEAREST)
+
+    return image, label
 
 
 

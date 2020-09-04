@@ -5,56 +5,42 @@ import random
 import numpy as np
 import cv2
 from PIL import Image
-
 from sklearn.utils import class_weight
 from tensorflow.keras.utils import Sequence
 
-from common.data_utils import random_horizontal_flip, random_vertical_flip, random_brightness, random_grayscale, random_chroma, random_contrast, random_sharpness, random_blur, random_zoom_rotate, random_crop
+from common.data_utils import random_horizontal_flip, random_vertical_flip, random_brightness, random_grayscale, random_chroma, random_contrast, random_sharpness, random_blur, random_zoom_rotate, random_crop, random_histeq
 
 
 class SegmentationGenerator(Sequence):
     def __init__(self, dataset_path, data_list,
                  batch_size=1,
                  num_classes=21,
-                 resize_shape=None,
-                 crop_shape=(640, 320),
+                 target_size=(512, 512),
                  weighted_type=None,
                  is_eval=False,
-                 augment=True,
-                 do_ahisteq=True):
+                 augment=True):
 
         # get real path for dataset
         dataset_realpath = os.path.realpath(dataset_path)
-
         self.image_path_list = [os.path.join(dataset_realpath, 'images', image_id.strip()+'.jpg') for image_id in data_list]
         self.label_path_list = [os.path.join(dataset_realpath, 'labels', image_id.strip()+'.png') for image_id in data_list]
-
         # initialize random seed
         np.random.seed(int(time.time()))
 
         self.num_classes = num_classes
         self.batch_size = batch_size
-        self.resize_shape = resize_shape
-        self.crop_shape = crop_shape
+        self.target_size = target_size
         self.weighted_type = weighted_type
         self.augment = augment
         self.is_eval = is_eval
 
         # prepare "Contrast Limited Adaptive Histogram Equalization" in cv2
-        self.histeq = do_ahisteq
-        self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        #self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
 
         # Preallocate memory
-        if self.crop_shape:
-            self.X = np.zeros((batch_size, crop_shape[1], crop_shape[0], 3), dtype='float32')
-            self.Y = np.zeros((batch_size, crop_shape[1]*crop_shape[0], 1), dtype='float32')
-            self.PIXEL_WEIGHTS = np.zeros((batch_size, crop_shape[1]*crop_shape[0]), dtype='float32')
-        elif self.resize_shape:
-            self.X = np.zeros((batch_size, resize_shape[1], resize_shape[0], 3), dtype='float32')
-            self.Y = np.zeros((batch_size, resize_shape[1]*resize_shape[0], 1), dtype='float32')
-            self.PIXEL_WEIGHTS = np.zeros((batch_size, resize_shape[1]*resize_shape[0]), dtype='float32')
-        else:
-            raise Exception('No image dimensions specified!')
+        self.X = np.zeros((batch_size, target_size[1], target_size[0], 3), dtype='float32')
+        self.Y = np.zeros((batch_size, target_size[1]*target_size[0], 1), dtype='float32')
+        self.PIXEL_WEIGHTS = np.zeros((batch_size, target_size[1]*target_size[0]), dtype='float32')
 
     def get_batch_image_path(self, i):
         return self.image_path_list[i*self.batch_size:(i+1)*self.batch_size]
@@ -83,11 +69,6 @@ class SegmentationGenerator(Sequence):
                 label[label>(self.num_classes-1)] = 255
             else:
                 label[label>(self.num_classes-1)] = 0
-
-            # Resize original image & label mask to model input shape
-            if self.resize_shape and not self.crop_shape:
-                image = cv2.resize(image, self.resize_shape)
-                label = cv2.resize(label, self.resize_shape, interpolation = cv2.INTER_NEAREST)
 
             # Do augmentation
             if self.augment:
@@ -118,15 +99,16 @@ class SegmentationGenerator(Sequence):
                 # random do gaussian blur to image
                 image = random_blur(image)
 
-                # random crop image & label if needed
-                if self.crop_shape:
-                    image, label = random_crop(image, label, self.crop_shape)
+                # random crop image & label
+                image, label = random_crop(image, label, self.target_size)
 
-            # Histogram equalization using CLAHE
-            if self.histeq:
-                img_yuv = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
-                img_yuv[:,:,0] = self.clahe.apply(img_yuv[:,:,0])
-                image = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR) # to BGR
+                # random do histogram equalization using CLAHE
+                image = random_histeq(image)
+
+
+            # Resize image & label mask to model input shape
+            image = cv2.resize(image, self.target_size)
+            label = cv2.resize(label, self.target_size, interpolation = cv2.INTER_NEAREST)
 
             label = label.astype('int32')
             y = label.flatten()

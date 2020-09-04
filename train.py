@@ -70,21 +70,18 @@ def main(args):
     train_generator = SegmentationGenerator(args.dataset_path, dataset[:num_train],
                                             args.batch_size,
                                             num_classes,
-                                            resize_shape=args.model_input_shape[::-1],
-                                            crop_shape=None,
+                                            target_size=args.model_input_shape[::-1],
                                             weighted_type=args.weighted_type,
-                                            augment=True,
-                                            do_ahisteq=False)
+                                            is_eval=False,
+                                            augment=True)
 
     valid_generator = SegmentationGenerator(args.dataset_path, dataset[num_train:],
                                             args.batch_size,
                                             num_classes,
-                                            resize_shape=args.model_input_shape[::-1],
-                                            crop_shape=None,
+                                            target_size=args.model_input_shape[::-1],
                                             weighted_type=args.weighted_type,
-                                            augment=False,
-                                            do_ahisteq=False)
-
+                                            is_eval=False,
+                                            augment=False)
 
     # prepare online evaluation callback
     if args.eval_online:
@@ -92,7 +89,6 @@ def main(args):
         callbacks.append(eval_callback)
 
     # prepare optimizer
-    #optimizer = Adam(lr=7e-4, epsilon=1e-8, decay=1e-6)
     optimizer = get_optimizer(args.optimizer, args.learning_rate, decay_type=None)
 
     # prepare loss according to loss type & weigted type
@@ -124,7 +120,6 @@ def main(args):
         raise ValueError('invalid loss type {}'.format(args.loss))
 
     # prepare metric
-    #metrics = {'pred_mask' : [Jaccard, sparse_accuracy_ignoring_last_label]}
     metrics = {'pred_mask' : Jaccard}
 
     # support multi-gpu training
