@@ -1,14 +1,14 @@
-# TF Keras DeepLab v3+ semantic segmentation
+# TF Keras DeepLab v3+ Modelset
 
 ## Introduction
 
-An end-to-end semantic image segmentation pipeline with DeepLabv3+ models. Implement with tf.keras, including data collection/annotation, model training/tuning, model evaluation and on device deployment. Support different backbones and different head architecture:
+An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement with tf.keras, including data collection/annotation, model training/tuning, model evaluation and on device deployment. Support different backbones and different head architecture:
 
 #### Backbone
 - [x] Xception
+- [x] ResNet50
 - [x] MobileNetV2
 - [x] MobilenetV3(Large/Small)
-- [x] ResNet50
 
 #### Head
 - [x] ASPP
@@ -231,19 +231,19 @@ If you enable "--eval_online" option in train.py, evaluation on validation datas
 
 Following is a sample result trained on MobilenetV2_Lite model with VOC2012+SBD dataset:
 <p align="center">
-  <img src="assets/mAP.png">
-  <img src="assets/COCO_AP.png">
+  <img src="assets/mIOU.png">
+  <img src="assets/confusion_matrix.png">
 </p>
 
 
 Some experiment on VOC2012+SBD dataset and comparison:
 
-| Model name | InputSize | Output Stride | TrainSet | TestSet | mIOU | FLOPS | Param | Speed | Ps |
+| Model type | InputSize | Output Stride | TrainSet | TestSet | mIOU | FLOPS | Param | Speed | Ps |
 | ----- | ------ | ------ | ------ | ----- | ----- | ----- | ----- | ----- | ----- |
-| [ResNet50](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/v1.0.0/deeplab_resnet50_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.52% | 73.95G | 26.72M | 44ms | Keras on Titan XP |
-| [MobileNetV3Large](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/v1.0.0/deeplab_mobilenetv3large_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.17% | 4.77G | 1.06M | 44ms | Keras on Titan XP |
-| [MobileNetV2_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/v1.0.0/deeplab_mobilenetv2_lite_512_os8_voc.tar.gz) | 512x512 | 8 | VOC2012 & SBD | VOC2012 | 67.55% | 17.17G | 2.11M | 44ms | Keras on Titan XP |
-| [MobileNetV3Small_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/v1.0.0/deeplab_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 8 | VOC2012 & SBD | VOC2012 | 64.28% | 4.77G | 1.06M | 44ms | Keras on Titan XP |
+| [ResNet50](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_resnet50_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.74% | 73.95G | 26.72M | 38ms | Keras on Titan XP |
+| [MobileNetV3Large](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3large_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.17% | 9.52G | 3.51M | 29ms | Keras on Titan XP |
+| [MobileNetV2_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv2_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 67.83% | 5.24G | 2.11M | 23ms | Keras on Titan XP |
+| [MobileNetV3Small_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 64.03% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
 
 
 ### Demo
