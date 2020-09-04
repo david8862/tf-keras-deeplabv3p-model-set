@@ -42,6 +42,16 @@ def img_resize(x, size, mode='bilinear'):
         raise ValueError('output model file is not specified')
 
 
+def CustomBatchNormalization(*args, **kwargs):
+    if tf.__version__ >= '2.2':
+        from tensorflow.keras.layers.experimental import SyncBatchNormalization
+        BatchNorm = SyncBatchNormalization
+    else:
+        BatchNorm = BatchNormalization
+
+    return BatchNorm(*args, **kwargs)
+
+
 
 def SepConv_BN(x, filters, prefix, stride=1, kernel_size=3, rate=1, depth_activation=False, epsilon=1e-3):
     """ SepConv with BN between depthwise & pointwise. Optionally add activation after BN
@@ -71,12 +81,12 @@ def SepConv_BN(x, filters, prefix, stride=1, kernel_size=3, rate=1, depth_activa
         x = ReLU()(x)
     x = DeeplabDepthwiseConv2D((kernel_size, kernel_size), strides=(stride, stride), dilation_rate=(rate, rate),
                         padding=depth_padding, use_bias=False, name=prefix + '_depthwise')(x)
-    x = BatchNormalization(name=prefix + '_depthwise_BN', epsilon=epsilon)(x)
+    x = CustomBatchNormalization(name=prefix + '_depthwise_BN', epsilon=epsilon)(x)
     if depth_activation:
         x = ReLU()(x)
     x = DeeplabConv2D(filters, (1, 1), padding='same',
                use_bias=False, name=prefix + '_pointwise')(x)
-    x = BatchNormalization(name=prefix + '_pointwise_BN', epsilon=epsilon)(x)
+    x = CustomBatchNormalization(name=prefix + '_pointwise_BN', epsilon=epsilon)(x)
     if depth_activation:
         x = ReLU()(x)
 
@@ -105,13 +115,13 @@ def ASPP_block(x, OS):
 
     b4 = DeeplabConv2D(256, (1, 1), padding='same',
                 use_bias=False, name='image_pooling')(b4)
-    b4 = BatchNormalization(name='image_pooling_BN', epsilon=1e-5)(b4)
+    b4 = CustomBatchNormalization(name='image_pooling_BN', epsilon=1e-5)(b4)
     b4 = ReLU()(b4)
     b4 = Lambda(img_resize, arguments={'size': (feature_shape[1], feature_shape[2]), 'mode': 'bilinear'}, name='aspp_resize')(b4)
 
     # simple 1x1
     b0 = DeeplabConv2D(256, (1, 1), padding='same', use_bias=False, name='aspp0')(x)
-    b0 = BatchNormalization(name='aspp0_BN', epsilon=1e-5)(b0)
+    b0 = CustomBatchNormalization(name='aspp0_BN', epsilon=1e-5)(b0)
     b0 = ReLU(name='aspp0_activation')(b0)
 
     # rate = 6 (12)
@@ -128,7 +138,7 @@ def ASPP_block(x, OS):
 
     x = DeeplabConv2D(256, (1, 1), padding='same',
                use_bias=False, name='concat_projection')(x)
-    x = BatchNormalization(name='concat_projection_BN', epsilon=1e-5)(x)
+    x = CustomBatchNormalization(name='concat_projection_BN', epsilon=1e-5)(x)
     x = ReLU()(x)
     x = Dropout(0.5)(x)
 
@@ -148,20 +158,20 @@ def ASPP_Lite_block(x):
 
     b4 = DeeplabConv2D(256, (1, 1), padding='same',
                 use_bias=False, name='image_pooling')(b4)
-    b4 = BatchNormalization(name='image_pooling_BN', epsilon=1e-5)(b4)
+    b4 = CustomBatchNormalization(name='image_pooling_BN', epsilon=1e-5)(b4)
     b4 = ReLU()(b4)
     b4 = Lambda(img_resize, arguments={'size': (feature_shape[1], feature_shape[2]), 'mode': 'bilinear'}, name='aspp_resize')(b4)
 
     # simple 1x1 conv
     b0 = DeeplabConv2D(256, (1, 1), padding='same', use_bias=False, name='aspp0')(x)
-    b0 = BatchNormalization(name='aspp0_BN', epsilon=1e-5)(b0)
+    b0 = CustomBatchNormalization(name='aspp0_BN', epsilon=1e-5)(b0)
     b0 = ReLU(name='aspp0_activation')(b0)
 
     # only 2 branches
     x = Concatenate()([b4, b0])
     x = DeeplabConv2D(256, (1, 1), padding='same',
                use_bias=False, name='concat_projection')(x)
-    x = BatchNormalization(name='concat_projection_BN', epsilon=1e-5)(x)
+    x = CustomBatchNormalization(name='concat_projection_BN', epsilon=1e-5)(x)
     x = ReLU()(x)
     x = Dropout(0.5)(x)
 
@@ -180,7 +190,7 @@ def Decoder_block(x, skip_feature):
 
     skip_feature = DeeplabConv2D(48, (1, 1), padding='same',
                        use_bias=False, name='feature_projection0')(skip_feature)
-    skip_feature = BatchNormalization(
+    skip_feature = CustomBatchNormalization(
         name='feature_projection0_BN', epsilon=1e-5)(skip_feature)
     skip_feature = ReLU()(skip_feature)
     x = Concatenate()([x, skip_feature])

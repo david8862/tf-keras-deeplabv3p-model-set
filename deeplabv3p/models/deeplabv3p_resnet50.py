@@ -54,7 +54,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block, rate=1):
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2a')(input_tensor)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
     x = ReLU()(x)
 
     x = Conv2D(filters2, kernel_size,
@@ -62,14 +62,14 @@ def identity_block(input_tensor, kernel_size, filters, stage, block, rate=1):
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2b')(x)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
     x = ReLU()(x)
 
     x = Conv2D(filters3, (1, 1),
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2c')(x)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
 
     x = add([x, input_tensor])
     x = ReLU()(x)
@@ -113,27 +113,27 @@ def conv_block(input_tensor,
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2a')(input_tensor)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
     x = ReLU()(x)
 
     x = Conv2D(filters2, kernel_size, padding='same',
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2b')(x)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
     x = ReLU()(x)
 
     x = Conv2D(filters3, (1, 1),
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2c')(x)
-    x = BatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
 
     shortcut = Conv2D(filters3, (1, 1), strides=strides,
                              kernel_initializer='he_normal',
                              dilation_rate=(rate, rate),
                              name=conv_name_base + '1')(input_tensor)
-    shortcut = BatchNormalization(
+    shortcut = CustomBatchNormalization(
         axis=bn_axis, name=bn_name_base + '1')(shortcut)
 
     x = add([x, shortcut])
@@ -253,7 +253,7 @@ def ResNet50(include_top=True,
                       padding='valid',
                       kernel_initializer='he_normal',
                       name='conv1')(x)
-    x = BatchNormalization(axis=bn_axis, name='bn_conv1')(x)
+    x = CustomBatchNormalization(axis=bn_axis, name='bn_conv1')(x)
     x = ReLU()(x)
     x = ZeroPadding2D(padding=(1, 1), name='pool1_pad')(x)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)

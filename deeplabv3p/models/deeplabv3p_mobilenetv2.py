@@ -14,7 +14,7 @@ from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lamb
 from tensorflow.keras.utils import get_source_inputs, get_file
 #from tensorflow.keras import backend as K
 
-from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
+from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
 
 BACKBONE_WEIGHT_PATH = ('https://github.com/JonathanCMitchell/mobilenet_v2_keras/'
                     'releases/download/v1.1/')
@@ -44,7 +44,7 @@ def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id, ski
         x = Conv2D(expansion * in_channels, kernel_size=1, padding='same',
                    use_bias=False, activation=None,
                    name=prefix + 'expand')(x)
-        x = BatchNormalization(epsilon=1e-3, momentum=0.999,
+        x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
                                name=prefix + 'expand_BN')(x)
         x = ReLU(max_value=6.)(x)
     else:
@@ -53,14 +53,14 @@ def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id, ski
     x = DepthwiseConv2D(kernel_size=3, strides=stride, activation=None,
                         use_bias=False, padding='same', dilation_rate=(rate, rate),
                         name=prefix + 'depthwise')(x)
-    x = BatchNormalization(epsilon=1e-3, momentum=0.999,
+    x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
                            name=prefix + 'depthwise_BN')(x)
     x = ReLU(max_value=6., name=prefix + 'depthwise_relu')(x)
 
     x = Conv2D(pointwise_filters,
                kernel_size=1, padding='same', use_bias=False, activation=None,
                name=prefix + 'project')(x)
-    x = BatchNormalization(epsilon=1e-3, momentum=0.999,
+    x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
                            name=prefix + 'project_BN')(x)
 
     if skip_connection:
@@ -99,7 +99,7 @@ def MobileNetV2_body(input_tensor, OS, alpha, weights='imagenet'):
                kernel_size=3,
                strides=(2, 2), padding='same',
                use_bias=False, name='Conv')(input_tensor)
-    x = BatchNormalization(
+    x = CustomBatchNormalization(
         epsilon=1e-3, momentum=0.999, name='Conv_BN')(x)
     x = ReLU(6.)(x)
 
@@ -164,7 +164,7 @@ def MobileNetV2_body(input_tensor, OS, alpha, weights='imagenet'):
                       kernel_size=1,
                       use_bias=False,
                       name='Conv_1')(x)
-    y = BatchNormalization(epsilon=1e-3,
+    y = CustomBatchNormalization(epsilon=1e-3,
                            momentum=0.999,
                            name='Conv_1_bn')(y)
     y = ReLU(6., name='out_relu')(y)

@@ -20,7 +20,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras import backend as K
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
-from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
+from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
 
 
 BASE_WEIGHT_PATH = ('https://github.com/DrSlink/mobilenet_v3_keras/'
@@ -171,7 +171,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
                           padding='same',
                           use_bias=False,
                           name=prefix + 'expand')(x)
-        x = BatchNormalization(axis=channel_axis,
+        x = CustomBatchNormalization(axis=channel_axis,
                                       epsilon=1e-3,
                                       momentum=0.999,
                                       name=prefix + 'expand/BatchNorm')(x)
@@ -186,7 +186,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
                                dilation_rate=(rate, rate),
                                use_bias=False,
                                name=prefix + 'depthwise/Conv')(x)
-    x = BatchNormalization(axis=channel_axis,
+    x = CustomBatchNormalization(axis=channel_axis,
                                   epsilon=1e-3,
                                   momentum=0.999,
                                   name=prefix + 'depthwise/BatchNorm')(x)
@@ -200,7 +200,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
                       padding='same',
                       use_bias=False,
                       name=prefix + 'project')(x)
-    x = BatchNormalization(axis=channel_axis,
+    x = CustomBatchNormalization(axis=channel_axis,
                                   epsilon=1e-3,
                                   momentum=0.999,
                                   name=prefix + 'project/BatchNorm')(x)
@@ -359,7 +359,7 @@ def MobileNetV3(stack_fn,
                       padding='valid',
                       use_bias=False,
                       name='Conv')(x)
-    x = BatchNormalization(axis=channel_axis,
+    x = CustomBatchNormalization(axis=channel_axis,
                                   epsilon=1e-3,
                                   momentum=0.999,
                                   name='Conv/BatchNorm')(x)
@@ -381,7 +381,7 @@ def MobileNetV3(stack_fn,
                       padding='same',
                       use_bias=False,
                       name='Conv_1')(x)
-    x = BatchNormalization(axis=channel_axis,
+    x = CustomBatchNormalization(axis=channel_axis,
                                   epsilon=1e-3,
                                   momentum=0.999,
                                   name='Conv_1/BatchNorm')(x)

@@ -29,6 +29,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 #### Train tech
 - [x] Transfer training from Imagenet/PascalVOC
 - [x] Dynamic learning rate decay (Cosine/Exponential/Polynomial/PiecewiseConstant)
+- [x] Multi-GPU training with SyncBatchNorm support
 
 #### On-device deployment
 - [x] Tensorflow-Lite Float32/UInt8 model inference
@@ -286,7 +287,6 @@ See [on-device inference](https://github.com/david8862/tf-keras-deeplabv3p-model
 
 
 ### TODO
-- [ ] support SyncBatchNorm
 - [ ] support model pruning
 - [ ] support SubPixel predict layer
 - [ ] support Quantization aware training

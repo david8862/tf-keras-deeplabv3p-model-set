@@ -17,7 +17,7 @@ from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lamb
 from tensorflow.keras.utils import get_source_inputs, get_file
 #from tensorflow.keras import backend as K
 
-from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, SepConv_BN, ASPP_block, Decoder_block, normalize, img_resize
+from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, SepConv_BN, ASPP_block, Decoder_block, normalize, img_resize
 
 WEIGHTS_PATH_X = "https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5"
 
@@ -81,7 +81,7 @@ def _xception_block(inputs, depth_list, prefix, skip_connection_type, stride,
         shortcut = _conv2d_same(inputs, depth_list[-1], prefix + '_shortcut',
                                 kernel_size=1,
                                 stride=stride)
-        shortcut = BatchNormalization(name=prefix + '_shortcut_BN')(shortcut)
+        shortcut = CustomBatchNormalization(name=prefix + '_shortcut_BN')(shortcut)
         outputs = add([residual, shortcut])
     elif skip_connection_type == 'sum':
         outputs = add([residual, inputs])
@@ -119,11 +119,11 @@ def Xception_body(input_tensor, OS):
     x = Conv2D(32, (3, 3), strides=(2, 2),
                name='entry_flow_conv1_1', use_bias=False, padding='same')(input_tensor)
 
-    x = BatchNormalization(name='entry_flow_conv1_1_BN')(x)
+    x = CustomBatchNormalization(name='entry_flow_conv1_1_BN')(x)
     x = ReLU()(x)
 
     x = _conv2d_same(x, 64, 'entry_flow_conv1_2', kernel_size=3, stride=1)
-    x = BatchNormalization(name='entry_flow_conv1_2_BN')(x)
+    x = CustomBatchNormalization(name='entry_flow_conv1_2_BN')(x)
     x = ReLU()(x)
 
     x = _xception_block(x, [128, 128, 128], 'entry_flow_block1',
