@@ -59,7 +59,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 Image detection sample:
 
 <p align="center">
-  <img src="assets/dog_inference.jpg">
+  <img src="assets/dog_inference.png">
 </p>
 
 
