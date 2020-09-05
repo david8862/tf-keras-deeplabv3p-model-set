@@ -208,7 +208,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Model definition options
     parser.add_argument('--model_type', type=str, required=False, default='mobilenetv2_lite',
-        help='DeepLabv3+ model type: mobilenetv2/mobilenetv2_lite/xception, default=%(default)s')
+        help='DeepLabv3+ model type: mobilenetv2/mobilenetv2_lite/resnet50, default=%(default)s')
     parser.add_argument('--weights_path', type=str, required=False, default=None,
         help = "Pretrained model/weights file for fine tune")
     parser.add_argument('--model_input_shape', type=str, required=False, default='512x512',

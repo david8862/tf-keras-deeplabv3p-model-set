@@ -265,7 +265,6 @@ def random_zoom_rotate(image, label, rotate_range=30, zoom_range=0.2, prob=0.3):
 
     warpAffine = rand() < prob
     if warpAffine and (rotate_range or zoom_range):
-    #if rotate_range or zoom_range:
         M = cv2.getRotationMatrix2D((image.shape[1]//2, image.shape[0]//2), angle, scale)
         image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]), flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
         label = cv2.warpAffine(label, M, (label.shape[1], label.shape[0]), flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=0)

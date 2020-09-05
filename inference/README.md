@@ -101,13 +101,13 @@ MNN support Post Training Integer quantization, so we can use its python CLI int
 4. Run validate script to check MNN model
 ```
 # cd tf-keras-deeplabv3p-model-set/tools/evaluation/
-# python validate_deeplab.py --model_path=model_quant.pb.mnn --classes_path=../../configs/voc_classes.txt --image_file=../../examples/dog.jpg --loop_count=5
+# python validate_deeplab.py --model_path=model_quant.pb.mnn --classes_path=../../configs/voc_classes.txt --image_file=../../example/2007_000346.jpg --label_file=../../example/2007_000346.png --loop_count=5
 ```
 
 Visualized segmentation result:
 
 <p align="center">
-  <img src="../assets/dog_inference.png">
+  <img src="../assets/2007_000346_inference.png">
 </p>
 
 #### You can also use [eval.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set#evaluation) to do evaluation on the MNN model
@@ -129,7 +129,7 @@ Usage: deeplabSegment
 --mask, -k: mask png file to save segment output
 --keep_shape, -p: [0|1] keep predict mask as the same shape of input image
 
-# ./deeplabSegment -m model.pb.mnn -i ../../../examples/dog.jpg -t 4 -c 10 -w 2 -l ../../../configs/voc_classes.txt -p 0
+# ./deeplabSegment -m model.pb.mnn -i ../../../example/dog.jpg -t 4 -c 10 -w 2 -l ../../../configs/voc_classes.txt -p 0
 Can't Find type=4 backend, use 0 instead
 num_classes: 21
 image_input: width:512 , height:512, channel: 3
@@ -200,7 +200,7 @@ Tensorflow-lite support both Float32 and UInt8 type model. We can dump out the k
 4. Run validate script to check TFLite model
 ```
 # cd tf-keras-deeplabv3p-model-set/tools/evaluation/
-# python validate_deeplab.py --model_path=model.tflite --classes_path=../../configs/voc_classes.txt --image_file=../../examples/dog.jpg --loop_count=5
+# python validate_deeplab.py --model_path=model.tflite --classes_path=../../configs/voc_classes.txt --image_file=../../example/2007_000346.jpg --label_file=../../example/2007_000346.png --loop_count=5
 ```
 #### You can also use [eval.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set#evaluation) to do evaluation on the TFLite model
 
@@ -225,7 +225,7 @@ Usage: deeplabSegment
 --verbose, -v: [0|1] print more information
 
 
-# ./deeplabSegment -m model.tflite -i ../../../examples/dog.jpg -t 4 -c 10 -w 2 -l ../../../configs/voc_classes.txt -p 0 -v 1
+# ./deeplabSegment -m model.tflite -i ../../../example/dog.jpg -t 4 -c 10 -w 2 -l ../../../configs/voc_classes.txt -p 0 -v 1
 Loaded model model.tflite
 resolved reporter
 num_classes: 21

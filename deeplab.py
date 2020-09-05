@@ -27,6 +27,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 #tf.enable_eager_execution()
+optimize_tf_gpu(tf, K)
 
 default_config = {
         "model_type": 'mobilenetv2lite',

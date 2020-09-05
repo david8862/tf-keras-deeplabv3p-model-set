@@ -36,15 +36,37 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 - [x] MNN Float32/UInt8 model inference
 
 
-## Guide of train/evaluate/demo
+## Quick Start
 
-### Train
-
-0. Install requirements on Ubuntu 16.04/18.04:
+1. Install requirements on Ubuntu 16.04/18.04:
 
 ```
 # pip install -r requirements.txt
 ```
+
+2. Download Deeplabv3+ PascalVOC pretrained weights.
+3. Run Deeplab segmentation on your image or video.
+
+```
+# wget -O weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5
+
+# python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --image
+
+# python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --input=<your video file>
+
+```
+
+Image detection sample:
+
+<p align="center">
+  <img src="assets/dog_inference.jpg">
+</p>
+
+
+
+## Guide of train/evaluate/demo
+
+### Train
 
 1. Prepare dataset
     1. PascalVOC2012 & SBD (VOC2012 train_aug) semantic segmentation dataset

@@ -19,7 +19,6 @@ class SegmentationGenerator(Sequence):
                  weighted_type=None,
                  is_eval=False,
                  augment=True):
-
         # get real path for dataset
         dataset_realpath = os.path.realpath(dataset_path)
         self.image_path_list = [os.path.join(dataset_realpath, 'images', image_id.strip()+'.jpg') for image_id in data_list]
@@ -33,9 +32,6 @@ class SegmentationGenerator(Sequence):
         self.weighted_type = weighted_type
         self.augment = augment
         self.is_eval = is_eval
-
-        # prepare "Contrast Limited Adaptive Histogram Equalization" in cv2
-        #self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
 
         # Preallocate memory
         self.X = np.zeros((batch_size, target_size[1], target_size[0], 3), dtype='float32')
