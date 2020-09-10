@@ -229,7 +229,7 @@ if __name__ == "__main__":
         help='path to class definitions, default=%(default)s')
 
     # Training options
-    parser.add_argument("--batch_size", type=int, required=False, default=8,
+    parser.add_argument("--batch_size", type=int, required=False, default=16,
         help='batch size for training, default=%(default)s')
     parser.add_argument('--optimizer', type=str, required=False, default='adam', choices=['adam', 'rmsprop', 'sgd'],
         help = "optimizer for training (adam/rmsprop/sgd), default=%(default)s")

@@ -49,9 +49,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 
 ```
 # wget -O weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5
-
 # python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --image
-
 # python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --input=<your video file>
 
 ```
@@ -174,7 +172,7 @@ optional arguments:
                         path to class definitions,
                         default=configs/voc_classes.txt
   --batch_size BATCH_SIZE
-                        batch size for training, default=8
+                        batch size for training, default=16
   --optimizer {adam,rmsprop,sgd}
                         optimizer for training (adam/rmsprop/sgd),
                         default=adam
@@ -210,7 +208,7 @@ optional arguments:
 
 Following is a reference config cmd for training mobilenetv2 lite model on PascalVOC2012 & SBD dataset:
 ```
-# python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=8 --freeze_level=1 --transfer_epoch=5 --total_epoch=100 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
+# python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=16 --freeze_level=1 --transfer_epoch=5 --total_epoch=100 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
 ```
 
 Checkpoints during training could be found at `logs/000/`. Choose a best one as result
@@ -265,8 +263,8 @@ Some experiment on VOC2012+SBD dataset and comparison:
 | ----- | ------ | ------ | ------ | ----- | ----- | ----- | ----- | ----- | ----- |
 | [ResNet50](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_resnet50_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.74% | 73.95G | 26.72M | 38ms | Keras on Titan XP |
 | [MobileNetV3Large](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3large_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.17% | 9.52G | 3.51M | 29ms | Keras on Titan XP |
-| [MobileNetV2_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv2_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 67.83% | 5.24G | 2.11M | 23ms | Keras on Titan XP |
-| [MobileNetV3Small_Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 64.03% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
+| [MobileNetV2 Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv2_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 67.83% | 5.24G | 2.11M | 23ms | Keras on Titan XP |
+| [MobileNetV3Small Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 64.03% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
 
 
 ### Demo

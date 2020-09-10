@@ -50,14 +50,14 @@ def identity_block(input_tensor, kernel_size, filters, stage, block, rate=1):
     conv_name_base = 'res' + str(stage) + block + '_branch'
     bn_name_base = 'bn' + str(stage) + block + '_branch'
 
-    x = Conv2D(filters1, (1, 1),
+    x = DeeplabConv2D(filters1, (1, 1),
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2a')(input_tensor)
     x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
     x = ReLU()(x)
 
-    x = Conv2D(filters2, kernel_size,
+    x = DeeplabConv2D(filters2, kernel_size,
                       padding='same',
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
@@ -65,7 +65,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block, rate=1):
     x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
     x = ReLU()(x)
 
-    x = Conv2D(filters3, (1, 1),
+    x = DeeplabConv2D(filters3, (1, 1),
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2c')(x)
@@ -109,27 +109,27 @@ def conv_block(input_tensor,
     conv_name_base = 'res' + str(stage) + block + '_branch'
     bn_name_base = 'bn' + str(stage) + block + '_branch'
 
-    x = Conv2D(filters1, (1, 1), strides=strides,
+    x = DeeplabConv2D(filters1, (1, 1), strides=strides,
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2a')(input_tensor)
     x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2a')(x)
     x = ReLU()(x)
 
-    x = Conv2D(filters2, kernel_size, padding='same',
+    x = DeeplabConv2D(filters2, kernel_size, padding='same',
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2b')(x)
     x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2b')(x)
     x = ReLU()(x)
 
-    x = Conv2D(filters3, (1, 1),
+    x = DeeplabConv2D(filters3, (1, 1),
                       kernel_initializer='he_normal',
                       dilation_rate=(rate, rate),
                       name=conv_name_base + '2c')(x)
     x = CustomBatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
 
-    shortcut = Conv2D(filters3, (1, 1), strides=strides,
+    shortcut = DeeplabConv2D(filters3, (1, 1), strides=strides,
                              kernel_initializer='he_normal',
                              dilation_rate=(rate, rate),
                              name=conv_name_base + '1')(input_tensor)
@@ -248,7 +248,7 @@ def ResNet50(include_top=True,
         bn_axis = 1
 
     x = ZeroPadding2D(padding=(3, 3), name='conv1_pad')(img_input)
-    x = Conv2D(64, (7, 7),
+    x = DeeplabConv2D(64, (7, 7),
                       strides=(2, 2),
                       padding='valid',
                       kernel_initializer='he_normal',

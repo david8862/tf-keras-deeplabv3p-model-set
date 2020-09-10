@@ -34,7 +34,7 @@ def _conv2d_same(x, filters, prefix, stride=1, kernel_size=3, rate=1):
             rate: atrous rate for depthwise convolution
     """
     if stride == 1:
-        return Conv2D(filters,
+        return DeeplabConv2D(filters,
                       (kernel_size, kernel_size),
                       strides=(stride, stride),
                       padding='same', use_bias=False,
@@ -46,7 +46,7 @@ def _conv2d_same(x, filters, prefix, stride=1, kernel_size=3, rate=1):
         pad_beg = pad_total // 2
         pad_end = pad_total - pad_beg
         x = ZeroPadding2D((pad_beg, pad_end))(x)
-        return Conv2D(filters,
+        return DeeplabConv2D(filters,
                       (kernel_size, kernel_size),
                       strides=(stride, stride),
                       padding='valid', use_bias=False,
@@ -116,7 +116,7 @@ def Xception_body(input_tensor, OS):
     else:
         raise ValueError('invalid output stride', OS)
 
-    x = Conv2D(32, (3, 3), strides=(2, 2),
+    x = DeeplabConv2D(32, (3, 3), strides=(2, 2),
                name='entry_flow_conv1_1', use_bias=False, padding='same')(input_tensor)
 
     x = CustomBatchNormalization(name='entry_flow_conv1_1_BN')(x)

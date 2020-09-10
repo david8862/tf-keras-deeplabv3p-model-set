@@ -41,7 +41,7 @@ def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id, ski
     prefix = 'expanded_conv_{}_'.format(block_id)
     if block_id:
         # Expand
-        x = Conv2D(expansion * in_channels, kernel_size=1, padding='same',
+        x = DeeplabConv2D(expansion * in_channels, kernel_size=1, padding='same',
                    use_bias=False, activation=None,
                    name=prefix + 'expand')(x)
         x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
@@ -50,14 +50,14 @@ def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id, ski
     else:
         prefix = 'expanded_conv_'
     # Depthwise
-    x = DepthwiseConv2D(kernel_size=3, strides=stride, activation=None,
+    x = DeeplabDepthwiseConv2D(kernel_size=3, strides=stride, activation=None,
                         use_bias=False, padding='same', dilation_rate=(rate, rate),
                         name=prefix + 'depthwise')(x)
     x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
                            name=prefix + 'depthwise_BN')(x)
     x = ReLU(max_value=6., name=prefix + 'depthwise_relu')(x)
 
-    x = Conv2D(pointwise_filters,
+    x = DeeplabConv2D(pointwise_filters,
                kernel_size=1, padding='same', use_bias=False, activation=None,
                name=prefix + 'project')(x)
     x = CustomBatchNormalization(epsilon=1e-3, momentum=0.999,
@@ -95,7 +95,7 @@ def MobileNetV2_body(input_tensor, OS, alpha, weights='imagenet'):
         raise ValueError('invalid output stride', OS)
 
     first_block_filters = _make_divisible(32 * alpha, 8)
-    x = Conv2D(first_block_filters,
+    x = DeeplabConv2D(first_block_filters,
                kernel_size=3,
                strides=(2, 2), padding='same',
                use_bias=False, name='Conv')(input_tensor)
@@ -160,7 +160,7 @@ def MobileNetV2_body(input_tensor, OS, alpha, weights='imagenet'):
     else:
         last_block_filters = 1280
 
-    y = Conv2D(last_block_filters,
+    y = DeeplabConv2D(last_block_filters,
                       kernel_size=1,
                       use_bias=False,
                       name='Conv_1')(x)

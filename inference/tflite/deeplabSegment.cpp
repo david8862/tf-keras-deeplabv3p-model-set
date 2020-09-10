@@ -332,7 +332,7 @@ void RunInference(Settings* s) {
       save_height = mask_height;
   }
 
-  // Show detection result
+  // Show segment class result
   LOG(INFO) << "Segment class:\n";
   for(auto class_index : class_indexes) {
       LOG(INFO) << classes[class_index] << "\n";

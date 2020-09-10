@@ -136,12 +136,12 @@ def _se_block(inputs, filters, se_ratio, prefix):
         x = Reshape((filters, 1, 1))(x)
     else:
         x = Reshape((1, 1, filters))(x)
-    x = Conv2D(_depth(filters * se_ratio),
+    x = DeeplabConv2D(_depth(filters * se_ratio),
                       kernel_size=1,
                       padding='same',
                       name=prefix + 'squeeze_excite/Conv')(x)
     x = ReLU(name=prefix + 'squeeze_excite/Relu')(x)
-    x = Conv2D(filters,
+    x = DeeplabConv2D(filters,
                       kernel_size=1,
                       padding='same',
                       name=prefix + 'squeeze_excite/Conv_1')(x)
@@ -166,7 +166,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
     if block_id:
         # Expand
         prefix = 'expanded_conv_{}/'.format(block_id)
-        x = Conv2D(_depth(infilters * expansion),
+        x = DeeplabConv2D(_depth(infilters * expansion),
                           kernel_size=1,
                           padding='same',
                           use_bias=False,
@@ -180,7 +180,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
     #if stride == 2:
         #x = ZeroPadding2D(padding=correct_pad(K, x, kernel_size),
                                  #name=prefix + 'depthwise/pad')(x)
-    x = DepthwiseConv2D(kernel_size,
+    x = DeeplabDepthwiseConv2D(kernel_size,
                                strides=stride,
                                padding='same',# if stride == 1 else 'valid',
                                dilation_rate=(rate, rate),
@@ -195,7 +195,7 @@ def _inverted_res_block(x, expansion, filters, kernel_size, stride,
     if se_ratio:
         x = _se_block(x, _depth(infilters * expansion), se_ratio, prefix)
 
-    x = Conv2D(filters,
+    x = DeeplabConv2D(filters,
                       kernel_size=1,
                       padding='same',
                       use_bias=False,
@@ -353,7 +353,7 @@ def MobileNetV3(stack_fn,
 
     x = ZeroPadding2D(padding=correct_pad(K, img_input, 3),
                              name='Conv_pad')(img_input)
-    x = Conv2D(16,
+    x = DeeplabConv2D(16,
                       kernel_size=3,
                       strides=(2, 2),
                       padding='valid',
@@ -376,7 +376,7 @@ def MobileNetV3(stack_fn,
     if alpha > 1.0:
         last_point_ch = _depth(last_point_ch * alpha)
 
-    x = Conv2D(last_conv_ch,
+    x = DeeplabConv2D(last_conv_ch,
                       kernel_size=1,
                       padding='same',
                       use_bias=False,
@@ -393,14 +393,14 @@ def MobileNetV3(stack_fn,
             x = Reshape((last_conv_ch, 1, 1))(x)
         else:
             x = Reshape((1, 1, last_conv_ch))(x)
-        x = Conv2D(last_point_ch,
+        x = DeeplabConv2D(last_point_ch,
                           kernel_size=1,
                           padding='same',
                           name='Conv_2')(x)
         x = Activation(activation)(x)
         if dropout_rate > 0:
             x = Dropout(dropout_rate)(x)
-        x = Conv2D(classes,
+        x = DeeplabConv2D(classes,
                           kernel_size=1,
                           padding='same',
                           name='Logits')(x)
