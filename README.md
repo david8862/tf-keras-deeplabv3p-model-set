@@ -44,7 +44,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 # pip install -r requirements.txt
 ```
 
-2. Download Deeplabv3+ PascalVOC pretrained weights.
+2. Download Deeplabv3+ PascalVOC pretrained weights. It's provided by [keras-deeplab-v3-plus](https://github.com/bonlime/keras-deeplab-v3-plus) and imported from [original TF checkpoint](https://github.com/tensorflow/models/tree/master/research/deeplab)
 3. Run Deeplab segmentation on your image or video.
 
 ```
@@ -54,7 +54,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 
 ```
 
-Image detection sample:
+Image segment sample:
 
 <p align="center">
   <img src="assets/dog_inference.png">
@@ -261,10 +261,10 @@ Some experiment on VOC2012+SBD dataset and comparison:
 
 | Model type | InputSize | Output Stride | TrainSet | TestSet | mIOU | FLOPS | Param | Speed | Ps |
 | ----- | ------ | ------ | ------ | ----- | ----- | ----- | ----- | ----- | ----- |
-| [ResNet50](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_resnet50_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.74% | 73.95G | 26.72M | 38ms | Keras on Titan XP |
-| [MobileNetV3Large](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3large_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.17% | 9.52G | 3.51M | 29ms | Keras on Titan XP |
+| [ResNet50](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.1/deeplabv3p_resnet50_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 73.71% | 73.95G | 26.72M | 38ms | Keras on Titan XP |
+| [MobileNetV3Large](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.1/deeplabv3p_mobilenetv3large_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 72.33% | 9.52G | 3.51M | 29ms | Keras on Titan XP |
 | [MobileNetV2 Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv2_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 67.83% | 5.24G | 2.11M | 23ms | Keras on Titan XP |
-| [MobileNetV3Small Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 64.03% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
+| [MobileNetV3Small Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.1/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC2012 & SBD | VOC2012 | 64.81% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
 
 
 ### Demo
