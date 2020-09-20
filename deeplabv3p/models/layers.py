@@ -4,17 +4,18 @@ from __future__ import division
 
 from functools import wraps
 
-#import numpy as np
 from tensorflow.keras import backend as K
 from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lambda, AveragePooling2D, Concatenate, BatchNormalization, Dropout, ReLU
 from tensorflow.keras.regularizers import l2
 import tensorflow as tf
 
+L2_FACTOR = 2e-5
 
 @wraps(Conv2D)
 def DeeplabConv2D(*args, **kwargs):
     """Wrapper to set Deeplab parameters for Conv2D."""
-    deeplab_conv_kwargs = {'kernel_regularizer': l2(2e-5)}
+    deeplab_conv_kwargs = {'kernel_regularizer': l2(L2_FACTOR)}
+    deeplab_conv_kwargs['bias_regularizer'] = l2(L2_FACTOR)
     #deeplab_conv_kwargs['padding'] = 'valid' if kwargs.get('strides')==(2,2) else 'same'
     deeplab_conv_kwargs.update(kwargs)
     return Conv2D(*args, **deeplab_conv_kwargs)
@@ -23,7 +24,8 @@ def DeeplabConv2D(*args, **kwargs):
 @wraps(DepthwiseConv2D)
 def DeeplabDepthwiseConv2D(*args, **kwargs):
     """Wrapper to set Deeplab parameters for DepthwiseConv2D."""
-    deeplab_conv_kwargs = {'kernel_regularizer': l2(2e-5)}
+    deeplab_conv_kwargs = {'kernel_regularizer': l2(L2_FACTOR)}
+    deeplab_conv_kwargs['bias_regularizer'] = l2(L2_FACTOR)
     #deeplab_conv_kwargs['padding'] = 'valid' if kwargs.get('strides')==(2,2) else 'same'
     deeplab_conv_kwargs.update(kwargs)
     return DepthwiseConv2D(*args, **deeplab_conv_kwargs)
