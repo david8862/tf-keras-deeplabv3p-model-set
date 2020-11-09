@@ -126,7 +126,7 @@ class SegmentationGenerator(Sequence):
             #
             ###########################################################################
 
-            # Create adaptive pixels weights for all classeson one image,
+            # Create adaptive pixels weights for all classes on one image,
             # according to pixel number of classes
             class_list = np.unique(y)
             if len(class_list):

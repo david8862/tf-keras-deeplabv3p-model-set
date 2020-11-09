@@ -14,9 +14,10 @@ set(DEEPLAB_SEGMENT_SRC
         deeplabSegment.cpp)
 
 #set(TF_ROOT_PATH /mnt/d/Downloads/tensorflow)
-
-include_directories("${TF_ROOT_PATH}" "${TF_ROOT_PATH}/tensorflow/lite/tools/make/downloads/flatbuffers/include")
 link_directories("${TF_ROOT_PATH}/tensorflow/lite/tools/make/gen/${TARGET_PLAT}/lib/")
+
 add_executable(deeplabSegment ${DEEPLAB_SEGMENT_SRC})
-target_link_libraries(deeplabSegment libtensorflow-lite.a -lstdc++ -lpthread -lm -ldl -lrt)
-#target_link_libraries(deeplabSegment -ltensorflow-lite -lstdc++ -lpthread -lm -ldl -lrt)
+
+target_include_directories(deeplabSegment PRIVATE ${TF_ROOT_PATH} ${TF_ROOT_PATH}/tensorflow/lite/tools/make/downloads/flatbuffers/include)
+target_link_libraries(deeplabSegment PRIVATE libtensorflow-lite.a -lstdc++ -lpthread -lm -ldl -lrt)
+#target_link_libraries(deeplabSegment PRIVATE -ltensorflow-lite -lstdc++ -lpthread -lm -ldl -lrt)
