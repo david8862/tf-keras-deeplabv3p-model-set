@@ -8,7 +8,7 @@ from PIL import Image
 from sklearn.utils import class_weight
 from tensorflow.keras.utils import Sequence
 
-from common.data_utils import random_horizontal_flip, random_vertical_flip, random_brightness, random_grayscale, random_chroma, random_contrast, random_sharpness, random_blur, random_zoom_rotate, random_crop, random_histeq
+from common.data_utils import random_horizontal_flip, random_vertical_flip, random_brightness, random_grayscale, random_chroma, random_contrast, random_sharpness, random_blur, random_zoom_rotate, random_gridmask, random_crop, random_histeq
 
 
 class SegmentationGenerator(Sequence):
@@ -76,6 +76,9 @@ class SegmentationGenerator(Sequence):
 
                 # random zoom & rotate image
                 image, label = random_zoom_rotate(image, label)
+
+                # random add gridmask augment for image and label
+                image, label = random_gridmask(image, label)
 
                 # random adjust brightness
                 image = random_brightness(image)
