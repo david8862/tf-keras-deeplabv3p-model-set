@@ -269,7 +269,6 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
 
 def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
                           alpha=1.0,
-                          #weights='pascal_voc',
                           weights='imagenet',
                           input_tensor=None,
                           num_classes=21,
