@@ -149,7 +149,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --model_type MODEL_TYPE
                         DeepLabv3+ model type:
-                        mobilenetv2/mobilenetv2_lite/xception,
+                        mobilenetv2/mobilenetv2_lite/resnet50,
                         default=mobilenetv2_lite
   --weights_path WEIGHTS_PATH
                         Pretrained model/weights file for fine tune
@@ -175,15 +175,14 @@ optional arguments:
   --batch_size BATCH_SIZE
                         batch size for training, default=16
   --optimizer {adam,rmsprop,sgd}
-                        optimizer for training (adam/rmsprop/sgd),
-                        default=adam
+                        optimizer for training (adam/rmsprop/sgd), default=sgd
   --loss {crossentropy,focal}
                         loss type for training (crossentropy/focal),
                         default=crossentropy
   --weighted_type {None,adaptive,balanced}
                         class balance weighted type, default=None
   --learning_rate LEARNING_RATE
-                        Initial learning rate, default=0.001
+                        Initial learning rate, default=0.01
   --decay_type {None,cosine,exponential,polynomial,piecewise_constant}
                         Learning rate decay type, default=None
   --transfer_epoch TRANSFER_EPOCH
@@ -209,7 +208,7 @@ optional arguments:
 
 Following is a reference config cmd for training mobilenetv2 lite model on PascalVOC2012 & SBD dataset:
 ```
-# python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=16 --freeze_level=1 --transfer_epoch=5 --total_epoch=100 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
+# python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --batch_size=16 --freeze_level=1 --transfer_epoch=5 --total_epoch=150 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
 ```
 
 Checkpoints during training could be found at `logs/000/`. Choose a best one as result

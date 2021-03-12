@@ -238,13 +238,13 @@ if __name__ == "__main__":
     # Training options
     parser.add_argument("--batch_size", type=int, required=False, default=16,
         help='batch size for training, default=%(default)s')
-    parser.add_argument('--optimizer', type=str, required=False, default='adam', choices=['adam', 'rmsprop', 'sgd'],
+    parser.add_argument('--optimizer', type=str, required=False, default='sgd', choices=['adam', 'rmsprop', 'sgd'],
         help = "optimizer for training (adam/rmsprop/sgd), default=%(default)s")
     parser.add_argument('--loss', type=str, required=False, default='crossentropy', choices=['crossentropy', 'focal'],
         help = "loss type for training (crossentropy/focal), default=%(default)s")
     parser.add_argument('--weighted_type', type=str, required=False, default=None, choices=[None, 'adaptive', 'balanced'],
         help = "class balance weighted type, default=%(default)s")
-    parser.add_argument('--learning_rate', type=float, required=False, default=1e-3,
+    parser.add_argument('--learning_rate', type=float, required=False, default=1e-2,
         help = "Initial learning rate, default=%(default)s")
     parser.add_argument('--decay_type', type=str, required=False, default=None, choices=[None, 'cosine', 'exponential', 'polynomial', 'piecewise_constant'],
         help = "Learning rate decay type, default=%(default)s")

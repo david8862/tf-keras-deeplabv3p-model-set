@@ -329,30 +329,29 @@ def ResNet50(include_top=True,
 
 
 def Deeplabv3pResNet50(input_shape=(512, 512, 3),
-                          weights=None,
+                          weights='imagenet',
                           input_tensor=None,
-                          classes=21,
-                          OS=8,
-                          **kwargs):
+                          num_classes=21,
+                          OS=8):
     """ Instantiates the Deeplabv3+ MobileNetV3Large architecture
     # Arguments
         input_shape: shape of input image. format HxWxC
             PASCAL VOC model was trained on (512,512,3) images
-        weights: one of 'pascal_voc' (pre-trained on pascal voc)
-            or None (random initialization)
+        weights: pretrained weights type
+                - imagenet: pre-trained on Imagenet
+                - None : random initialization
         input_tensor: optional Keras tensor (i.e. output of `layers.Input()`)
             to use as image input for the model.
-        classes: number of desired classes. If classes != 21,
-            last layer is initialized randomly
-        OS: determines input_shape/feature_extractor_output ratio. One of {8,16}.
+        num_classes: number of desired classes.
+        OS: determines input_shape/feature_extractor_output ratio. One of {8,16,32}.
 
     # Returns
         A Keras model instance.
     """
-    if not (weights in {'pascal_voc', None}):
+    if not (weights in {'imagenet', None}):
         raise ValueError('The `weights` argument should be either '
-                         '`None` (random initialization) or `pascal_voc` '
-                         '(pre-trained on PASCAL VOC)')
+                         '`imagenet` (pre-trained on Imagenet) or '
+                         '`None` (random initialization)')
 
     if input_tensor is None:
         img_input = Input(shape=input_shape, name='image_input')
@@ -363,7 +362,7 @@ def Deeplabv3pResNet50(input_shape=(512, 512, 3),
     img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, skip_feature, backbone_len = ResNet50(include_top=False, input_tensor=img_norm, weights='imagenet', OS=OS)
+    x, skip_feature, backbone_len = ResNet50(include_top=False, input_tensor=img_norm, weights=weights, OS=OS)
 
     # ASPP block
     x = ASPP_block(x, OS)
@@ -372,9 +371,9 @@ def Deeplabv3pResNet50(input_shape=(512, 512, 3),
     x = Decoder_block(x, skip_feature)
 
     # Final prediction conv block
-    x = DeeplabConv2D(classes, (1, 1), padding='same', name='logits_semantic')(x)
+    x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='logits_semantic')(x)
     x = Lambda(img_resize, arguments={'size': (input_shape[0],input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
-    x = Reshape((input_shape[0]*input_shape[1], classes)) (x)
+    x = Reshape((input_shape[0]*input_shape[1], num_classes)) (x)
     x = Softmax(name='Predictions/Softmax')(x)
 
     # Ensure that the model takes into account

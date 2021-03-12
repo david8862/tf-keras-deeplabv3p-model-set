@@ -198,11 +198,10 @@ def MobileNetV2_body(input_tensor, OS, alpha, weights='imagenet'):
 
 def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
                           alpha=1.0,
-                          weights=None,
+                          weights='imagenet',
                           input_tensor=None,
-                          classes=21,
-                          OS=8,
-                          **kwargs):
+                          num_classes=21,
+                          OS=8):
     """ Instantiates the Deeplabv3+ MobileNetV2 architecture
     # Arguments
         input_shape: shape of input image. format HxWxC
@@ -216,24 +215,22 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
                 - If `alpha` = 1, default number of filters from the paper
                     are used at each layer.
             Used only for mobilenetv2 backbone
-        weights: one of 'pascal_voc' (pre-trained on pascal voc)
-            or None (random initialization)
+        weights: pretrained weights type
+                - imagenet: pre-trained on Imagenet
+                - None : random initialization
         input_tensor: optional Keras tensor (i.e. output of `layers.Input()`)
             to use as image input for the model.
-        classes: number of desired classes. If classes != 21,
-            last layer is initialized randomly
-        OS: determines input_shape/feature_extractor_output ratio. One of {8,16}.
-            Used only for xception backbone.
+        num_classes: number of desired classes.
+        OS: determines input_shape/feature_extractor_output ratio. One of {8,16,32}.
 
     # Returns
         A Keras model instance.
     """
 
-    if not (weights in {'pascal_voc', None}):
+    if not (weights in {'imagenet', None}):
         raise ValueError('The `weights` argument should be either '
-                         '`None` (random initialization) or `pascal_voc` '
-                         '(pre-trained on PASCAL VOC)')
-
+                         '`imagenet` (pre-trained on Imagenet) or '
+                         '`None` (random initialization)')
     if input_tensor is None:
         img_input = Input(shape=input_shape, name='image_input')
     else:
@@ -243,7 +240,7 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
     img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, skip_feature, backbone_len = MobileNetV2_body(img_norm, OS, alpha)
+    x, skip_feature, backbone_len = MobileNetV2_body(img_norm, OS, alpha, weights=weights)
 
     # ASPP block
     x = ASPP_block(x, OS)
@@ -252,9 +249,9 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
     x = Decoder_block(x, skip_feature)
 
     # Final prediction conv block
-    x = DeeplabConv2D(classes, (1, 1), padding='same', name='logits_semantic')(x)
+    x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='logits_semantic')(x)
     x = Lambda(img_resize, arguments={'size': (input_shape[0],input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
-    x = Reshape((input_shape[0]*input_shape[1], classes)) (x)
+    x = Reshape((input_shape[0]*input_shape[1], num_classes)) (x)
     x = Softmax(name='Predictions/Softmax')(x)
 
 
@@ -267,22 +264,16 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
 
     model = Model(img_input, x, name='deeplabv3p_mobilenetv2')
 
-    # load weights
-    #if weights == 'pascal_voc':
-        #weights_path = get_file('deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels.h5',
-                                #WEIGHTS_PATH_MOBILE,
-                                #cache_subdir='models')
-        #model.load_weights(weights_path, by_name=True)
     return model, backbone_len
 
 
 def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
                           alpha=1.0,
-                          weights='pascal_voc',
+                          #weights='pascal_voc',
+                          weights='imagenet',
                           input_tensor=None,
-                          classes=21,
-                          OS=8,
-                          **kwargs):
+                          num_classes=21,
+                          OS=8):
     """ Instantiates the Deeplabv3+ MobileNetV2Lite architecture
     # Arguments
         input_shape: shape of input image. format HxWxC
@@ -296,14 +287,14 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
                 - If `alpha` = 1, default number of filters from the paper
                     are used at each layer.
             Used only for mobilenetv2 backbone
-        weights: one of 'pascal_voc' (pre-trained on pascal voc)
-            or None (random initialization)
+        weights: pretrained weights type
+                - pascalvoc : pre-trained on PASCAL VOC
+                - imagenet: pre-trained on Imagenet
+                - None : random initialization
         input_tensor: optional Keras tensor (i.e. output of `layers.Input()`)
             to use as image input for the model.
-        classes: number of desired classes. If classes != 21,
-            last layer is initialized randomly
-        OS: determines input_shape/feature_extractor_output ratio. One of {8,16}.
-            Used only for xception backbone.
+        num_classes: number of desired classes.
+        OS: determines input_shape/feature_extractor_output ratio. One of {8,16,32}.
 
     # Returns
         A Keras model instance.
@@ -313,10 +304,11 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
         ValueError: in case of invalid argument for `weights` or `backbone`
     """
 
-    if not (weights in {'pascal_voc', None}):
+    if not (weights in {'pascalvoc', 'imagenet', None}):
         raise ValueError('The `weights` argument should be either '
-                         '`None` (random initialization) or `pascal_voc` '
-                         '(pre-trained on PASCAL VOC)')
+                         '`pascalvoc` (pre-trained on PASCAL VOC) '
+                         '`imagenet` (pre-trained on Imagenet) or '
+                         '`None` (random initialization)')
 
     if input_tensor is None:
         img_input = Input(shape=input_shape, name='image_input')
@@ -327,15 +319,15 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
     img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, _, backbone_len = MobileNetV2_body(img_norm, OS, alpha)
+    x, _, backbone_len = MobileNetV2_body(img_norm, OS, alpha, weights=weights)
 
     # use ASPP Lite block & no decode block
     x = ASPP_Lite_block(x)
 
     # Final prediction conv block
-    x = DeeplabConv2D(classes, (1, 1), padding='same', name='logits_semantic')(x)
+    x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='logits_semantic')(x)
     x = Lambda(img_resize, arguments={'size': (input_shape[0],input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
-    x = Reshape((input_shape[0]*input_shape[1], classes)) (x)
+    x = Reshape((input_shape[0]*input_shape[1], num_classes)) (x)
     x = Softmax(name='Predictions/Softmax')(x)
 
 
@@ -349,7 +341,7 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
     model = Model(img_input, x, name='deeplabv3p_mobilenetv2')
 
     # load weights
-    if weights == 'pascal_voc':
+    if weights == 'pascalvoc':
         weights_path = get_file('deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels.h5',
                                 WEIGHTS_PATH_MOBILE,
                                 cache_subdir='models')

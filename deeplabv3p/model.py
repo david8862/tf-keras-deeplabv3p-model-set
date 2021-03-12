@@ -42,7 +42,7 @@ def get_deeplabv3p_model(model_type, num_classes, model_input_shape, output_stri
     model, backbone_len = model_function(input_tensor=input_tensor,
                                          input_shape=model_input_shape + (3,),
                                          weights=None,
-                                         classes=21,
+                                         num_classes=21,
                                          OS=output_stride)
 
     base_model = Model(model.input, model.layers[-5].output)

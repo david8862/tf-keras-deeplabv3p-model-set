@@ -165,11 +165,10 @@ def Xception_body(input_tensor, OS):
 
 
 def Deeplabv3pXception(input_shape=(512, 512, 3),
-                       weights='pascal_voc',
+                       weights='pascalvoc',
                        input_tensor=None,
-                       classes=21,
-                       OS=16,
-                       **kwargs):
+                       num_classes=21,
+                       OS=16):
     """ Instantiates the Deeplabv3+ architecture
     Optionally loads weights pre-trained
     on PASCAL VOC. This model is available for TensorFlow only,
@@ -178,14 +177,13 @@ def Deeplabv3pXception(input_shape=(512, 512, 3),
     # Arguments
         input_shape: shape of input image. format HxWxC
             PASCAL VOC model was trained on (512,512,3) images
-        weights: one of 'pascal_voc' (pre-trained on pascal voc)
-            or None (random initialization)
+        weights: pretrained weights type
+                - pascalvoc : pre-trained on PASCAL VOC
+                - None : random initialization
         input_tensor: optional Keras tensor (i.e. output of `layers.Input()`)
             to use as image input for the model.
-        classes: number of desired classes. If classes != 21,
-            last layer is initialized randomly
-        OS: determines input_shape/feature_extractor_output ratio. One of {8,16}.
-            Used only for xception backbone.
+        num_classes: number of desired classes.
+        OS: determines input_shape/feature_extractor_output ratio. One of {8,16,32}
     # Returns
         A Keras model instance.
     # Raises
@@ -194,9 +192,9 @@ def Deeplabv3pXception(input_shape=(512, 512, 3),
         ValueError: in case of invalid argument for `weights` or `backbone`
     """
 
-    if not (weights in {'pascal_voc', None}):
+    if not (weights in {'pascalvoc', None}):
         raise ValueError('The `weights` argument should be either '
-                         '`None` (random initialization) or `pascal_voc` '
+                         '`None` (random initialization) or `pascalvoc` '
                          '(pre-trained on PASCAL VOC)')
 
     if input_tensor is None:
@@ -217,9 +215,9 @@ def Deeplabv3pXception(input_shape=(512, 512, 3),
     x = Decoder_block(x, skip_feature)
 
     # Final prediction conv block
-    x = DeeplabConv2D(classes, (1, 1), padding='same', name='logits_semantic')(x)
+    x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='logits_semantic')(x)
     x = Lambda(img_resize, arguments={'size': (input_shape[0],input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
-    x = Reshape((input_shape[0]*input_shape[1], classes)) (x)
+    x = Reshape((input_shape[0]*input_shape[1], num_classes)) (x)
     x = Softmax(name='Predictions/Softmax')(x)
 
     # Ensure that the model takes into account
@@ -232,7 +230,7 @@ def Deeplabv3pXception(input_shape=(512, 512, 3),
     model = Model(img_input, x, name='deeplabv3p_xception')
 
     # load weights
-    if weights == 'pascal_voc':
+    if weights == 'pascalvoc':
         weights_path = get_file('deeplabv3_xception_tf_dim_ordering_tf_kernels.h5',
                                 WEIGHTS_PATH_X,
                                 cache_subdir='models')
