@@ -1,8 +1,8 @@
 numpy
 scipy
 scikit-learn
-opencv-python
-opencv-contrib-python
+opencv-python==4.2.0.32
+opencv-contrib-python==4.2.0.32
 tensorflow-gpu
 keras_applications
 matplotlib
