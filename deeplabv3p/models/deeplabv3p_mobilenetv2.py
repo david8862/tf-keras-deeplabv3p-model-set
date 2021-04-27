@@ -337,7 +337,7 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
     #else:
         #inputs = img_input
 
-    model = Model(img_input, x, name='deeplabv3p_mobilenetv2')
+    model = Model(img_input, x, name='deeplabv3p_mobilenetv2_lite')
 
     # load weights
     if weights == 'pascalvoc':
