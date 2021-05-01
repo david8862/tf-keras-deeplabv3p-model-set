@@ -11,6 +11,7 @@ from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnP
 
 from deeplabv3p.model import get_deeplabv3p_model
 from unet.model import get_unet_model
+from fast_scnn.model import get_fast_scnn_model
 from deeplabv3p.data import SegmentationGenerator
 from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy
 from deeplabv3p.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
@@ -133,6 +134,8 @@ def main(args):
             # get multi-gpu train model
             if args.model_type.startswith('unet_'):
                 model = get_unet_model(args.model_type, num_classes, args.model_input_shape, args.freeze_level, weights_path=args.weights_path)
+            elif args.model_type.startswith('fast_scnn'):
+                model = get_fast_scnn_model(args.model_type, num_classes, args.model_input_shape, weights_path=args.weights_path)
             else:
                 model = get_deeplabv3p_model(args.model_type, num_classes, args.model_input_shape, args.output_stride, args.freeze_level, weights_path=args.weights_path)
             # compile model
@@ -142,6 +145,8 @@ def main(args):
         # get normal train model
         if args.model_type.startswith('unet_'):
             model = get_unet_model(args.model_type, num_classes, args.model_input_shape, args.freeze_level, weights_path=args.weights_path)
+        elif args.model_type.startswith('fast_scnn'):
+            model = get_fast_scnn_model(args.model_type, num_classes, args.model_input_shape, weights_path=args.weights_path)
         else:
             model = get_deeplabv3p_model(args.model_type, num_classes, args.model_input_shape, args.output_stride, args.freeze_level, weights_path=args.weights_path)
         # compile model
