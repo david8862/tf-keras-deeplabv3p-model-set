@@ -30,6 +30,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 #### Train tech
 - [x] Transfer training from Imagenet/PascalVOC
 - [x] Dynamic learning rate decay (Cosine/Exponential/Polynomial/PiecewiseConstant)
+- [x] Weights Average policy for optimizer (EMA/SWA/Lookahead, valid for TF-2.x with tfa)
 - [x] GridMask data augmentation ([paper](https://arxiv.org/abs/2001.04086))
 - [x] Multi-GPU training with SyncBatchNorm support (valid for TF-2.2 and later)
 
@@ -139,6 +140,7 @@ usage: train.py [-h] [--model_type MODEL_TYPE] [--weights_path WEIGHTS_PATH]
                 [--optimizer {adam,rmsprop,sgd}] [--loss {crossentropy,focal}]
                 [--weighted_type {None,adaptive,balanced}]
                 [--learning_rate LEARNING_RATE]
+                [--average_type {None,ema,swa,lookahead}]
                 [--decay_type {None,cosine,exponential,polynomial,piecewise_constant}]
                 [--transfer_epoch TRANSFER_EPOCH] [--freeze_level {0,1,2}]
                 [--init_epoch INIT_EPOCH] [--total_epoch TOTAL_EPOCH]
@@ -184,6 +186,8 @@ optional arguments:
                         class balance weighted type, default=None
   --learning_rate LEARNING_RATE
                         Initial learning rate, default=0.01
+  --average_type {None,ema,swa,lookahead}
+                        weights average type, default=None
   --decay_type {None,cosine,exponential,polynomial,piecewise_constant}
                         Learning rate decay type, default=None
   --transfer_epoch TRANSFER_EPOCH
@@ -268,7 +272,7 @@ Some experiment on VOC2012+SBD dataset and comparison:
 | [MobileNetV2 Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.0/deeplabv3p_mobilenetv2_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC12&SBD train | VOC12&SBD val | 67.83% | 5.24G | 2.11M | 23ms | Keras on Titan XP |
 | [MobileNetV3Small Lite](https://github.com/david8862/tf-keras-deeplabv3p-model-set/releases/download/1.0.1/deeplabv3p_mobilenetv3small_lite_512_os16_voc.tar.gz) | 512x512 | 16 | VOC12&SBD train | VOC12&SBD val | 64.81% | 1.36G | 1.06M | 20ms | Keras on Titan XP |
 
-NOTE: If you meet any model loading problem with these pretrained weights due to h5 format compatibility issue, try to run "Model dump" with it again to regenerate the inference model.
+**NOTE**: If you meet any model loading problem with these pretrained weights due to h5 format compatibility issue, try to run "Model dump" with it again to regenerate the inference model.
 
 
 ### Demo

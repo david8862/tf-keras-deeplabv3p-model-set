@@ -91,7 +91,7 @@ def main(args):
         callbacks.append(eval_callback)
 
     # prepare optimizer
-    optimizer = get_optimizer(args.optimizer, args.learning_rate, decay_type=None)
+    optimizer = get_optimizer(args.optimizer, args.learning_rate, average_type=args.average_type, decay_type=None)
 
     # prepare loss according to loss type & weigted type
     if args.weighted_type == 'balanced':
@@ -180,7 +180,7 @@ def main(args):
         callbacks.remove(reduce_lr)
         steps_per_epoch = max(1, len(train_generator))
         decay_steps = steps_per_epoch * (args.total_epoch - args.init_epoch - args.transfer_epoch)
-        optimizer = get_optimizer(args.optimizer, args.learning_rate, decay_type=args.decay_type, decay_steps=decay_steps)
+        optimizer = get_optimizer(args.optimizer, args.learning_rate, average_type=args.average_type, decay_type=args.decay_type, decay_steps=decay_steps)
 
     # Unfreeze the whole network for further tuning
     # NOTE: more GPU memory is required after unfreezing the body
@@ -251,6 +251,8 @@ if __name__ == "__main__":
         help = "class balance weighted type, default=%(default)s")
     parser.add_argument('--learning_rate', type=float, required=False, default=1e-2,
         help = "Initial learning rate, default=%(default)s")
+    parser.add_argument('--average_type', type=str, required=False, default=None, choices=[None, 'ema', 'swa', 'lookahead'],
+        help = "weights average type, default=%(default)s")
     parser.add_argument('--decay_type', type=str, required=False, default=None, choices=[None, 'cosine', 'exponential', 'polynomial', 'piecewise_constant'],
         help = "Learning rate decay type, default=%(default)s")
     parser.add_argument('--transfer_epoch', type=int, required=False, default=5,

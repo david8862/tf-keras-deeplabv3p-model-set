@@ -12,7 +12,7 @@ from tensorflow.keras.layers import Conv2D, SeparableConv2D, DepthwiseConv2D, Up
 from tensorflow.keras.utils import get_source_inputs, get_file
 from tensorflow.keras import backend as K
 
-from deeplabv3p.models.layers import normalize, img_resize
+from deeplabv3p.models.layers import normalize, img_resize, DeeplabConv2D, DeeplabDepthwiseConv2D, DeeplabSeparableConv2D, CustomBatchNormalization
 
 
 def conv_block(inputs, conv_type, kernel, kernel_size, strides, padding='same', relu=True):
@@ -21,11 +21,11 @@ def conv_block(inputs, conv_type, kernel, kernel_size, strides, padding='same', 
     #### Custom function for conv2d: conv_block
     """
     if(conv_type == 'ds'):
-      x = SeparableConv2D(kernel, kernel_size, padding=padding, strides = strides)(inputs)
+      x = DeeplabSeparableConv2D(kernel, kernel_size, padding=padding, strides = strides)(inputs)
     else:
-      x = Conv2D(kernel, kernel_size, padding=padding, strides = strides)(inputs)
+      x = DeeplabConv2D(kernel, kernel_size, padding=padding, strides = strides)(inputs)
 
-    x = BatchNormalization()(x)
+    x = CustomBatchNormalization()(x)
 
     if (relu):
       x = ReLU()(x)
@@ -41,8 +41,8 @@ def _res_bottleneck(inputs, filters, kernel, t, s, r=False):
 
     x = conv_block(inputs, 'conv', tchannel, (1, 1), strides=(1, 1))
 
-    x = DepthwiseConv2D(kernel, strides=(s, s), depth_multiplier=1, padding='same')(x)
-    x = BatchNormalization()(x)
+    x = DeeplabDepthwiseConv2D(kernel, strides=(s, s), depth_multiplier=1, padding='same')(x)
+    x = CustomBatchNormalization()(x)
     x = ReLU()(x)
 
     x = conv_block(x, 'conv', filters, (1, 1), strides=(1, 1), padding='same', relu=False)
@@ -74,7 +74,7 @@ def pyramid_pooling_block(input_tensor, bin_sizes):
 
     for bin_size in bin_sizes:
       x = AveragePooling2D(pool_size=(w//bin_size, h//bin_size), strides=(w//bin_size, h//bin_size))(input_tensor)
-      x = Conv2D(128, 3, 2, padding='same')(x)
+      x = DeeplabConv2D(128, 3, 2, padding='same')(x)
       x = Lambda(img_resize, arguments={'size': (w, h), 'mode': 'bilinear'})(x)
       #x = UpSampling2D((w//bin_size, h//bin_size))(x)
 
@@ -114,26 +114,26 @@ def FastSCNN(num_classes,
     """## Step 3: Feature Fusion"""
     ff_layer1 = conv_block(lds_layer, 'conv', 128, (1,1), padding='same', strides= (1,1), relu=False)
     ff_layer2 = UpSampling2D((4, 4))(gfe_layer)
-    ff_layer2 = SeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), activation=None, dilation_rate=(4, 4))(ff_layer2)
+    ff_layer2 = DeeplabSeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), activation=None, dilation_rate=(4, 4))(ff_layer2)
 
     # old approach with DepthWiseConv2d
-    #ff_layer2 = DepthwiseConv2D((3,3), strides=(1, 1), depth_multiplier=1, padding='same')(ff_layer2)
+    #ff_layer2 = DeeplabDepthwiseConv2D((3,3), strides=(1, 1), depth_multiplier=1, padding='same')(ff_layer2)
 
-    ff_layer2 = BatchNormalization()(ff_layer2)
+    ff_layer2 = CustomBatchNormalization()(ff_layer2)
     ff_layer2 = ReLU()(ff_layer2)
-    ff_layer2 = Conv2D(128, 1, 1, padding='same', activation=None)(ff_layer2)
+    ff_layer2 = DeeplabConv2D(128, 1, 1, padding='same', activation=None)(ff_layer2)
 
     ff_final = Add()([ff_layer1, ff_layer2])
-    ff_final = BatchNormalization()(ff_final)
+    ff_final = CustomBatchNormalization()(ff_final)
     ff_final = ReLU()(ff_final)
 
     """## Step 4: Classifier"""
-    classifier = SeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), name = 'DSConv1_classifier')(ff_final)
-    classifier = BatchNormalization()(classifier)
+    classifier = DeeplabSeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), name = 'DSConv1_classifier')(ff_final)
+    classifier = CustomBatchNormalization()(classifier)
     classifier = ReLU()(classifier)
 
-    classifier = SeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), name = 'DSConv2_classifier')(classifier)
-    classifier = BatchNormalization()(classifier)
+    classifier = DeeplabSeparableConv2D(128, (3, 3), padding='same', strides = (1, 1), name = 'DSConv2_classifier')(classifier)
+    classifier = CustomBatchNormalization()(classifier)
     classifier = ReLU()(classifier)
 
     classifier = conv_block(classifier, 'conv', num_classes, (1, 1), strides=(1, 1), padding='same', relu=False)
