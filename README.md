@@ -71,7 +71,7 @@ Image segment sample:
 
 1. Prepare dataset
     1. PascalVOC2012 & SBD (VOC2012 train_aug) semantic segmentation dataset
-        * Run a simple script to download, convert & merge PascalVOC 2012 and SBD
+        * Run a simple script to download, convert & merge PascalVOC 2012 and SBD:
 
             ```
             # pushd tools/dataset_converter/voc_augment/
@@ -93,7 +93,7 @@ Image segment sample:
        You can dig into related script for details. Dataset images & labels will be placed at `mscoco2017/`
 
     3. ADE20K semantic segmentation dataset
-        * Run a simple script to download, merge & convert ADE20K dataset
+        * Run a simple script to download, merge & convert ADE20K dataset:
 
             ```
             # pushd tools/dataset_converter/ade20k/
@@ -103,7 +103,18 @@ Image segment sample:
             ```
        Dataset images & labels will be placed at `ADEChallengeData2016/`
 
-    3. Customized semantic segmentation dataset
+    4. Cityscapes semantic segmentation dataset
+        * Download the Cityscapes dataset package from `https://www.cityscapes-dataset.com/` (need registration) and put to `tools/dataset_converter/cityscapes/`. Then run a simple script to merge & convert:
+
+            ```
+            # pushd tools/dataset_converter/cityscapes/
+            # ./dataset_prepare.sh
+            # popd
+
+            ```
+       Dataset images & labels will be placed at `Cityscapes/`
+
+    5. Customized semantic segmentation dataset
         * Collecting target JPG format images and place at `<dataset_path>/images`
         * Generate semantic segmentation label image. You can use [labelme](https://github.com/wkentaro/labelme) to annotate your image with polygonal segmentation mask and save to a json file. Then run [json_to_dataset.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/tools/dataset_converter/labelme/json_to_dataset.py) to convert json annotations to PascalVOC style PNG format label images:
             ```

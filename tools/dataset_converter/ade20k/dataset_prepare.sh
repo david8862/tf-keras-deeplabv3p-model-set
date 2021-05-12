@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ADE20K dataset for semantic segmentation, 923M (train: 20210, val: 2000)
+# ADE20K dataset for semantic segmentation, 923MB (train: 20210, val: 2000)
 echo "Downloading ADE20K dataset..."
 wget -O ADEChallengeData2016.zip http://data.csail.mit.edu/places/ADEchallenge/ADEChallengeData2016.zip
 
