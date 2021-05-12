@@ -1,0 +1,150 @@
+wall
+building
+sky
+floor
+tree
+ceiling
+road
+bed
+window
+grass
+cabinet
+sidewalk
+person
+ground
+door
+table
+mountain
+plant
+curtain
+chair
+car
+water
+picture
+sofa
+shelf
+house
+sea
+mirror
+carpet
+field
+armchair
+seat
+fence
+desk
+rock
+closet
+lamp
+bathtub
+railing
+cushion
+base
+box
+column
+signboard
+chest of drawers
+counter
+sand
+sink
+skyscraper
+fireplace
+refrigerator
+grandstand
+path
+stairs, steps
+runway
+showcase
+billiard table
+pillow
+screen door
+stairway
+river
+bridge
+bookcase
+blind, screen
+coffee table
+toilet
+flower
+book
+hill
+bench
+countertop
+stove
+palm tree
+kitchen island
+computer
+swivel chair
+boat
+bar
+arcade machine
+hovel
+bus
+towel
+light
+truck
+tower
+chandelier
+sunshade
+streetlight
+booth
+television
+aeroplane
+dirt track
+clothes
+pole
+land
+handrail
+escalator
+ottoman
+bottle
+buffet
+poster
+stage
+van
+ship
+fountain
+conveyer belt
+canopy
+washing machine
+toy
+swimming pool
+stool
+barrel
+basket
+waterfall
+tent
+bag
+motorbike
+cradle
+oven
+ball
+solid food
+stair
+tank
+brand
+microwave
+flowerpot
+animal
+bicycle
+lake
+dishwasher
+silver screen
+blanket
+sculpture
+exhaust hood
+sconce
+vase
+traffic light
+tray
+dustbin
+fan
+wharf
+crt screen
+plate
+monitor
+notice board
+shower
+radiator
+glass
+clock
+flag

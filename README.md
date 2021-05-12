@@ -79,7 +79,7 @@ Image segment sample:
             # popd
 
             ```
-       dataset images & labels will be placed at `VOC2012/`
+       Dataset images & labels will be placed at `VOC2012/`
 
     2. MS COCO 2017 segmentation dataset
         * Run a simple script to download COCO2017 dataset, and convert annotated instance mask to PNG format semantic segmentation label image:
@@ -91,6 +91,17 @@ Image segment sample:
 
             ```
        You can dig into related script for details. Dataset images & labels will be placed at `mscoco2017/`
+
+    3. ADE20K semantic segmentation dataset
+        * Run a simple script to download, merge & convert ADE20K dataset
+
+            ```
+            # pushd tools/dataset_converter/ade20k/
+            # ./dataset_prepare.sh
+            # popd
+
+            ```
+       Dataset images & labels will be placed at `ADEChallengeData2016/`
 
     3. Customized semantic segmentation dataset
         * Collecting target JPG format images and place at `<dataset_path>/images`
