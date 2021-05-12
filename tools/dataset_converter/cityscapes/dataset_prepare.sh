@@ -78,17 +78,30 @@ pushd Cityscapes/images/val/
 ls | cut -d . -f1 > ../../val.txt
 popd
 
-mkdir -p Cityscapes/images/test/
-pushd Cityscapes/leftImg8bit_trainvaltest/leftImg8bit/test/
-find -name *.png | xargs -n1 -i mv {} ../../../images/test/
-popd
-pushd Cityscapes/images/test/
-ls | cut -d . -f1 > ../../test.txt
-popd
+#mkdir -p Cityscapes/images/test/
+#pushd Cityscapes/leftImg8bit_trainvaltest/leftImg8bit/test/
+#find -name *.png | xargs -n1 -i mv {} ../../../images/test/
+#popd
+#pushd Cityscapes/images/test/
+#ls | cut -d . -f1 > ../../test.txt
+#popd
 
-mv Cityscapes/images/train/*.png Cityscapes/images/
-mv Cityscapes/images/val/*.png Cityscapes/images/
-mv Cityscapes/images/test/*.png Cityscapes/images/
+# convert png input images to jpg, then merge together
+pushd Cityscapes/images/train/
+ls -1 *.png | xargs -n 1 bash -c 'convert "$0" "${0%.png}.jpg"'
+popd
+mv Cityscapes/images/train/*.jpg Cityscapes/images/
+
+pushd Cityscapes/images/val/
+ls -1 *.png | xargs -n 1 bash -c 'convert "$0" "${0%.png}.jpg"'
+popd
+mv Cityscapes/images/val/*.jpg Cityscapes/images/
+
+#pushd Cityscapes/images/test/
+#ls -1 *.png | xargs -n 1 bash -c 'convert "$0" "${0%.png}.jpg"'
+#popd
+#mv Cityscapes/images/test/*.jpg Cityscapes/images/
+
 rm -rf Cityscapes/images/train Cityscapes/images/val Cityscapes/images/test
 
 
