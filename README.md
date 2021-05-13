@@ -136,7 +136,7 @@ Image segment sample:
                                       output path of converted png label images
             ```
 
-            For class names file format, refer to  [voc_classes.txt](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/configs/voc_classes.txt).
+            For class names file format, refer to  [voc_classes.txt](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/configs/voc_classes.txt) (not including background class, which would be added as index 0 in code by default).
 
         * Place the PNG label images at `<dataset_path>/labels`
         * Create PascalVOC style dataset split (train/val/test) txt files. One line for a image and only include image base name, like:
@@ -312,7 +312,7 @@ video inference mode
 For video detection mode, you can use "input=0" to capture live video from web camera and "output=<video name>" to dump out inference result to another video
 
 ### Tensorflow model convert
-Using [keras_to_tensorflow.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/tools/model_converter/keras_to_tensorflow.py) to convert the tf.keras .h5 model to tensorflow frozen pb model (only for TF 1.x):
+Using [keras_to_tensorflow.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/tools/model_converter/keras_to_tensorflow.py) to convert the tf.keras .h5 model to tensorflow frozen pb model:
 ```
 # python keras_to_tensorflow.py
     --input_model="path/to/keras/model.h5"
