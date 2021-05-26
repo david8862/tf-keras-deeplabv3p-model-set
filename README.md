@@ -30,6 +30,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 #### Train tech
 - [x] Transfer training from Imagenet/PascalVOC
 - [x] Dynamic learning rate decay (Cosine/Exponential/Polynomial/PiecewiseConstant)
+- [x] Mixed precision training (valid for TF-2.1 and above)
 - [x] Weights Average policy for optimizer (EMA/SWA/Lookahead, valid for TF-2.x with tfa)
 - [x] GridMask data augmentation ([paper](https://arxiv.org/abs/2001.04086))
 - [x] Multi-GPU training with SyncBatchNorm support (valid for TF-2.2 and later)
@@ -164,9 +165,10 @@ usage: train.py [-h] [--model_type MODEL_TYPE] [--weights_path WEIGHTS_PATH]
                 [--learning_rate LEARNING_RATE]
                 [--average_type {None,ema,swa,lookahead}]
                 [--decay_type {None,cosine,exponential,polynomial,piecewise_constant}]
-                [--transfer_epoch TRANSFER_EPOCH] [--freeze_level {0,1,2}]
-                [--init_epoch INIT_EPOCH] [--total_epoch TOTAL_EPOCH]
-                [--gpu_num GPU_NUM] [--model_pruning] [--eval_online]
+                [--mixed_precision] [--transfer_epoch TRANSFER_EPOCH]
+                [--freeze_level {0,1,2}] [--init_epoch INIT_EPOCH]
+                [--total_epoch TOTAL_EPOCH] [--gpu_num GPU_NUM]
+                [--model_pruning] [--eval_online]
                 [--eval_epoch_interval EVAL_EPOCH_INTERVAL]
                 [--save_eval_checkpoint]
 
@@ -212,6 +214,7 @@ optional arguments:
                         weights average type, default=None
   --decay_type {None,cosine,exponential,polynomial,piecewise_constant}
                         Learning rate decay type, default=None
+  --mixed_precision     Use mixed precision mode in training, only for TF>2.1
   --transfer_epoch TRANSFER_EPOCH
                         Transfer training stage epochs, default=5
   --freeze_level {0,1,2}

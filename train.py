@@ -36,6 +36,17 @@ def main(args):
     class_names = ['background'] + class_names
     num_classes = len(class_names)
 
+    if args.mixed_precision:
+        tf_major_version = float(tf.__version__[:3])
+        if tf_major_version >= 2.1:
+            # apply mixed_precision for valid TF version
+            from tensorflow.keras.mixed_precision import experimental as mixed_precision
+
+            policy = mixed_precision.Policy('mixed_float16')
+            mixed_precision.set_policy(policy)
+        else:
+            raise ValueError('Tensorflow {} does not support mixed precision'.format(tf.__version__))
+
     # callbacks for training process
     monitor = 'Jaccard'
 
@@ -272,6 +283,8 @@ if __name__ == "__main__":
         help = "weights average type, default=%(default)s")
     parser.add_argument('--decay_type', type=str, required=False, default=None, choices=[None, 'cosine', 'exponential', 'polynomial', 'piecewise_constant'],
         help = "Learning rate decay type, default=%(default)s")
+    parser.add_argument('--mixed_precision', default=False, action="store_true",
+        help='Use mixed precision mode in training, only for TF>2.1')
     parser.add_argument('--transfer_epoch', type=int, required=False, default=5,
         help = "Transfer training stage epochs, default=%(default)s")
     parser.add_argument('--freeze_level', type=int, required=False, default=1, choices=[0, 1, 2],
