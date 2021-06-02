@@ -27,7 +27,7 @@ def get_array_from_mat(mat_file, label_type):
         raise ValueError('invalid label type')
 
     mat = scipy.io.loadmat(mat_file, mat_dtype=True, squeeze_me=True, struct_as_record=False)
-    return mat[key].Segmentation
+    return mat[key].Segmentation.astype(np.uint8)
 
 
 #def get_pascal_palette(png_file):
@@ -56,17 +56,24 @@ def label_convert(mat_label_path, png_label_path, label_type):
 
     # count class item number
     class_count = OrderedDict([(item, 0) for item in PASCAL_VOC_CLASSES])
+    max_instance_number = 0
 
     mat_files = glob.glob(os.path.join(mat_label_path, '*.mat'))
     pbar = tqdm(total=len(mat_files), desc='Label converting')
     for mat_file in mat_files:
         label_array = get_array_from_mat(mat_file, label_type)
 
-        # count object class for statistic
-        label_list = list(np.unique(label_array))
-        for label in label_list:
-            class_name = PASCAL_VOC_CLASSES[label]
-            class_count[class_name] = class_count[class_name] + 1
+        if label_type == 'semantic':
+            # count semantic class for statistic
+            label_list = list(np.unique(label_array))
+            for label in label_list:
+                class_name = PASCAL_VOC_CLASSES[label]
+                class_count[class_name] = class_count[class_name] + 1
+        else: # instance label
+            # collect max instance number per image
+            instance_number = max(list(np.unique(label_array)))
+            if instance_number >= max_instance_number:
+                max_instance_number = instance_number
 
         # save numpy label array as png label image,
         # using labelme utils function
@@ -75,13 +82,17 @@ def label_convert(mat_label_path, png_label_path, label_type):
         pbar.update(1)
 
     pbar.close()
-    # show item number statistic
-    print('Image number for each class:')
-    for (class_name, number) in class_count.items():
-        if class_name == 'background':
-            continue
-        print('%s: %d' % (class_name, number))
-    print('total number of converted images: ', len(mat_files))
+    if label_type == 'semantic':
+        # show semantic class statistic
+        print('Image number for each semantic class:')
+        for (class_name, number) in class_count.items():
+            if class_name == 'background':
+                continue
+            print('%s: %d' % (class_name, number))
+        print('total number of converted images: ', len(mat_files))
+    else: # instance label
+        # show instance number statistic
+        print('Max instance number in one image: ', max_instance_number)
 
 
 def main():
