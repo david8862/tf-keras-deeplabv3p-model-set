@@ -59,7 +59,7 @@ def label_convert(mat_label_path, png_label_path, label_type):
     max_instance_number = 0
 
     mat_files = glob.glob(os.path.join(mat_label_path, '*.mat'))
-    pbar = tqdm(total=len(mat_files), desc='Label converting')
+    pbar = tqdm(total=len(mat_files), desc='{} label converting'.format(label_type))
     for mat_file in mat_files:
         label_array = get_array_from_mat(mat_file, label_type)
 

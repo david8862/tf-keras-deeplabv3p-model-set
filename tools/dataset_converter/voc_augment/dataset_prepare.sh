@@ -10,13 +10,14 @@ mv VOCdevkit/VOC2012 VOC2012_orig && rm -r VOCdevkit
 # augmented PASCAL VOC, 1.3 GB
 echo "Downloading SBD dataset..."
 wget http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
-tar -zxvf benchmark.tgz
+tar xvf benchmark.tgz
 mv benchmark_RELEASE VOC_aug
 
 
-# convert SBD mat label file to PascalVOC png label file
+# convert SBD semantic & instance mat label file to PascalVOC png label file
 echo "SBD label convert..."
 python voc_aug_convert.py --mat_label_path=./VOC_aug/dataset/cls --png_label_path=./VOC_aug/dataset/cls_png --label_type=semantic
+python voc_aug_convert.py --mat_label_path=./VOC_aug/dataset/inst --png_label_path=./VOC_aug/dataset/inst_png --label_type=instance
 
 # merge dataset txt files
 echo "merge dataset..."
@@ -24,8 +25,15 @@ python imageset_merge.py --voc_set_file=./VOC2012_orig/ImageSets/Segmentation/tr
 python imageset_merge.py --voc_set_file=./VOC2012_orig/ImageSets/Segmentation/val.txt --sbd_set_file=./VOC_aug/dataset/val.txt --output_file=./val.txt
 python imageset_merge.py --voc_set_file=./train.txt --sbd_set_file=./val.txt --output_file=./trainval.txt
 
+# merge semantic segment label files
 cp -rf ./VOC2012_orig/SegmentationClass/* ./VOC_aug/dataset/cls_png/
 cp -rf ./VOC_aug/dataset/cls_png/*  ./VOC2012_orig/SegmentationClass/
+
+# merge instance segment label files
+cp -rf ./VOC2012_orig/SegmentationObject/* ./VOC_aug/dataset/inst_png/
+cp -rf ./VOC_aug/dataset/inst_png/*  ./VOC2012_orig/SegmentationObject/
+
+# merge dataset files
 cp -rf ./train.txt ./VOC2012_orig/ImageSets/Segmentation/train.txt
 cp -rf ./val.txt ./VOC2012_orig/ImageSets/Segmentation/val.txt
 cp -rf ./trainval.txt ./VOC2012_orig/ImageSets/Segmentation/trainval.txt
