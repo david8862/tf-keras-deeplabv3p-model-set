@@ -197,14 +197,15 @@ coco_category_list = ['background',
                       'window-other',
                       'wood']
 
-def get_label_array(annotations, height, width, class_names):
+def get_label_array(annotations, coco, height, width, class_names):
     # alloc label array for whole image
     label_array = np.zeros((height, width), dtype=np.uint8)
 
     for annotation in annotations:
         # decode mask & category_id for each annotated instance
-        rle = coco_mask.frPyObjects(annotation['segmentation'], height, width)
-        mask = coco_mask.decode(rle)
+        #rle = coco_mask.frPyObjects(annotation['segmentation'], height, width)
+        #mask = coco_mask.decode(rle)
+        mask = coco.annToMask(annotation)
         category_id = annotation['category_id']
 
         # search category_id from COCO full list to get its name,
@@ -250,7 +251,7 @@ def coco_label_convert(annotation_path, datasets, class_names, output_path):
             image_metadata = coco.loadImgs(image_id)[0]
 
             # form a segmentation label array with instances annotation info
-            label_array = get_label_array(image_annotations, image_metadata['height'],
+            label_array = get_label_array(image_annotations, coco, image_metadata['height'],
                                       image_metadata['width'], class_names)
 
             # label array filter. only more than 1k valid label pixels
