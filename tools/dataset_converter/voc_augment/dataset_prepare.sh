@@ -17,7 +17,7 @@ mv benchmark_RELEASE VOC_aug
 # convert SBD semantic & instance mat label file to PascalVOC png label file
 echo "SBD label convert..."
 python voc_aug_convert.py --mat_label_path=./VOC_aug/dataset/cls --png_label_path=./VOC_aug/dataset/cls_png --label_type=semantic
-python voc_aug_convert.py --mat_label_path=./VOC_aug/dataset/inst --png_label_path=./VOC_aug/dataset/inst_png --label_type=instance
+#python voc_aug_convert.py --mat_label_path=./VOC_aug/dataset/inst --png_label_path=./VOC_aug/dataset/inst_png --label_type=instance
 
 # merge dataset txt files
 echo "merge dataset..."
@@ -30,8 +30,8 @@ cp -rf ./VOC2012_orig/SegmentationClass/* ./VOC_aug/dataset/cls_png/
 cp -rf ./VOC_aug/dataset/cls_png/*  ./VOC2012_orig/SegmentationClass/
 
 # merge instance segment label files
-cp -rf ./VOC2012_orig/SegmentationObject/* ./VOC_aug/dataset/inst_png/
-cp -rf ./VOC_aug/dataset/inst_png/*  ./VOC2012_orig/SegmentationObject/
+#cp -rf ./VOC2012_orig/SegmentationObject/* ./VOC_aug/dataset/inst_png/
+#cp -rf ./VOC_aug/dataset/inst_png/*  ./VOC2012_orig/SegmentationObject/
 
 # merge dataset files
 cp -rf ./train.txt ./VOC2012_orig/ImageSets/Segmentation/train.txt
