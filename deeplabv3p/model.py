@@ -11,6 +11,7 @@ from deeplabv3p.models.deeplabv3p_xception import Deeplabv3pXception
 from deeplabv3p.models.deeplabv3p_mobilenetv2 import Deeplabv3pMobileNetV2, Deeplabv3pLiteMobileNetV2
 from deeplabv3p.models.deeplabv3p_mobilenetv3 import Deeplabv3pMobileNetV3Large, Deeplabv3pLiteMobileNetV3Large, Deeplabv3pMobileNetV3Small, Deeplabv3pLiteMobileNetV3Small
 from deeplabv3p.models.deeplabv3p_peleenet import Deeplabv3pPeleeNet, Deeplabv3pLitePeleeNet
+from deeplabv3p.models.deeplabv3p_ghostnet import Deeplabv3pGhostNet, Deeplabv3pLiteGhostNet
 from deeplabv3p.models.deeplabv3p_resnet50 import Deeplabv3pResNet50
 from deeplabv3p.models.layers import DeeplabConv2D, Subpixel, img_resize
 
@@ -29,6 +30,9 @@ deeplab_model_map = {
 
     'peleenet': Deeplabv3pPeleeNet,
     'peleenet_lite': Deeplabv3pLitePeleeNet,
+
+    'ghostnet': Deeplabv3pGhostNet,
+    'ghostnet_lite': Deeplabv3pLiteGhostNet,
 
     'xception': Deeplabv3pXception,
     'resnet50': Deeplabv3pResNet50,

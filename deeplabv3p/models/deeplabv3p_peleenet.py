@@ -3,6 +3,8 @@
 """ Deeplabv3+ PeleeNet model for Keras.
 
 # Reference Paper:
+- [Encoder-Decoder with Atrous Separable Convolution
+    for Semantic Image Segmentation](https://arxiv.org/pdf/1802.02611.pdf)
 - [Densely Connected Convolutional Networks](https://arxiv.org/pdf/1608.06993.pdf)
 - [Pelee: A Real-Time Object Detection System on Mobile Devices](https://arxiv.org/abs/1804.06882)
 """
