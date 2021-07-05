@@ -17,7 +17,7 @@ from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSpa
 from deeplabv3p.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
 from common.utils import get_classes, get_data_list, optimize_tf_gpu, calculate_weigths_labels, load_class_weights
 from common.model_utils import get_optimizer
-from common.callbacks import EvalCallBack
+from common.callbacks import EvalCallBack, CheckpointCleanCallBack
 
 # Try to enable Auto Mixed Precision on TF 2.0
 os.environ['TF_ENABLE_AUTO_MIXED_PRECISION'] = '1'
@@ -62,9 +62,10 @@ def main(args):
     reduce_lr = ReduceLROnPlateau(monitor='val_{}'.format(monitor), factor=0.5, mode='max',
                 patience=5, verbose=1, cooldown=0, min_lr=1e-6)
     early_stopping = EarlyStopping(monitor='val_{}'.format(monitor), min_delta=0, patience=100, verbose=1, mode='max')
+    checkpoint_clean = CheckpointCleanCallBack(log_dir, max_val_keep=5, max_eval_keep=2)
     terminate_on_nan = TerminateOnNaN()
 
-    callbacks=[tensorboard, checkpoint, reduce_lr, early_stopping, terminate_on_nan]
+    callbacks=[tensorboard, checkpoint, checkpoint_clean, reduce_lr, early_stopping, terminate_on_nan]
 
 
     # get train&val dataset

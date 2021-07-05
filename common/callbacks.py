@@ -3,10 +3,33 @@
 """custom model callbacks."""
 import os, sys, random, tempfile
 import numpy as np
+import glob
 from tensorflow_model_optimization.sparsity import keras as sparsity
 from tensorflow.keras.callbacks import Callback
 
 from eval import eval_mIOU
+
+
+class CheckpointCleanCallBack(Callback):
+    def __init__(self, checkpoint_dir, max_val_keep=5, max_eval_keep=2):
+        self.checkpoint_dir = checkpoint_dir
+        self.max_val_keep = max_val_keep
+        self.max_eval_keep = max_eval_keep
+
+    def on_epoch_end(self, epoch, logs=None):
+
+        # filter out eval checkpoints and val checkpoints
+        all_checkpoints = sorted(glob.glob(os.path.join(self.checkpoint_dir, 'ep*.h5')))
+        eval_checkpoints = sorted(glob.glob(os.path.join(self.checkpoint_dir, 'ep*-mIOU*.h5')))
+        val_checkpoints = sorted(list(set(all_checkpoints) - set(eval_checkpoints)))
+
+        # keep latest val checkpoints
+        for val_checkpoint in val_checkpoints[:-(self.max_val_keep)]:
+            os.remove(val_checkpoint)
+
+        # keep latest eval checkpoints
+        for eval_checkpoint in eval_checkpoints[:-(self.max_eval_keep)]:
+            os.remove(eval_checkpoint)
 
 
 class EvalCallBack(Callback):
