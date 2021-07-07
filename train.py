@@ -65,7 +65,7 @@ def main(args):
     checkpoint_clean = CheckpointCleanCallBack(log_dir, max_val_keep=5, max_eval_keep=2)
     terminate_on_nan = TerminateOnNaN()
 
-    callbacks=[tensorboard, checkpoint, checkpoint_clean, reduce_lr, early_stopping, terminate_on_nan]
+    callbacks = [tensorboard, checkpoint, reduce_lr, early_stopping, terminate_on_nan, checkpoint_clean]
 
 
     # get train&val dataset
@@ -100,7 +100,7 @@ def main(args):
     # prepare online evaluation callback
     if args.eval_online:
         eval_callback = EvalCallBack(args.dataset_path, dataset[num_train:], class_names, args.model_input_shape, args.model_pruning, log_dir, eval_epoch_interval=args.eval_epoch_interval, save_eval_checkpoint=args.save_eval_checkpoint)
-        callbacks.append(eval_callback)
+        callbacks.insert(-1, eval_callback) # add before checkpoint clean
 
     # prepare optimizer
     optimizer = get_optimizer(args.optimizer, args.learning_rate, average_type=None, decay_type=None)
@@ -205,7 +205,7 @@ def main(args):
                                                                   save_weights_only=False,
                                                                   save_best_only=True,
                                                                   period=1)
-            callbacks.append(avg_checkpoint)
+            callbacks.insert(-1, avg_checkpoint) # add before checkpoint clean
 
         steps_per_epoch = max(1, len(train_generator))
         decay_steps = steps_per_epoch * (args.total_epoch - args.init_epoch - args.transfer_epoch)

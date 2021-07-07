@@ -286,7 +286,7 @@ def GhostNet(input_shape=None,
              weights='imagenet',
              input_tensor=None,
              width=1.0,
-             dropout=0.2,
+             dropout_rate=0.2,
              pooling=None,
              classes=1000,
              **kwargs):
@@ -311,6 +311,8 @@ def GhostNet(input_shape=None,
         input_tensor: optional Keras tensor (i.e. output of
             `layers.Input()`)
             to use as image input for the model.
+        width: controls the width of the network
+        dropout_rate: fraction of the input units to drop on the last layer
         pooling: Optional pooling mode for feature extraction
             when `include_top` is `False`.
             - `None` means that the output of the model
@@ -434,8 +436,8 @@ def GhostNet(input_shape=None,
                    name='conv_head')(x)
         x = ReLU(name='relu_head')(x)
 
-        if dropout > 0.:
-            x = Dropout(dropout, name='dropout_1')(x)
+        if dropout_rate > 0.:
+            x = Dropout(dropout_rate, name='dropout_1')(x)
         x = Flatten()(x)
         x = Dense(units=classes, activation='softmax',
                          use_bias=True, name='classifier')(x)
@@ -471,7 +473,7 @@ def GhostNet(input_shape=None,
 
     # get backbone length
     if include_top:
-        if dropout > 0.:
+        if dropout_rate > 0.:
             backbone_len = len(model.layers) - 7
         else:
             backbone_len = len(model.layers) - 6
