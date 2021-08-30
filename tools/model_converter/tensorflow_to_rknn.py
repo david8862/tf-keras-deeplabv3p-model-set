@@ -55,7 +55,7 @@ def main():
     parser.add_argument('--output_model', required=True, type=str, help='output rknn model file')
     parser.add_argument('--model_input_shape', type=str, help='model image input shape as <height>x<width>, default=%(default)s', default='512x512')
     parser.add_argument('--dataset_file', required=True, type=str, help='data samples txt file')
-    parser.add_argument('--target_platform', required=False, type=str, default='rv1126', choices=['rk1808', 'rk3399pro', 'rv1109', 'rv1126'], help = "target Rockchip platform, default=%(default)s")
+    parser.add_argument('--target_platform', required=False, type=str, default='rv1126', choices=['rk1808', 'rk3399pro', 'rv1109', 'rv1126'], help='target Rockchip platform, default=%(default)s')
 
     args = parser.parse_args()
     height, width = args.model_input_shape.split('x')

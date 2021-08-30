@@ -152,7 +152,7 @@ def main(args):
                 model = get_deeplabv3p_model(args.model_type, num_classes, args.model_input_shape, args.output_stride, args.freeze_level, weights_path=args.weights_path)
             # compile model
             model.compile(optimizer=optimizer, sample_weight_mode=sample_weight_mode,
-                          loss = losses, metrics = metrics)
+                          loss=losses, metrics=metrics)
     else:
         # get normal train model
         if args.model_type.startswith('unet_'):
@@ -163,7 +163,7 @@ def main(args):
             model = get_deeplabv3p_model(args.model_type, num_classes, args.model_input_shape, args.output_stride, args.freeze_level, weights_path=args.weights_path)
         # compile model
         model.compile(optimizer=optimizer, sample_weight_mode=sample_weight_mode,
-                      loss = losses, metrics = metrics)
+                      loss=losses, metrics=metrics)
     model.summary()
 
     # Transfer training some epochs with frozen layers first if needed, to get a stable loss.
@@ -219,13 +219,13 @@ def main(args):
             for i in range(len(model.layers)):
                 model.layers[i].trainable = True
             model.compile(optimizer=optimizer, sample_weight_mode=sample_weight_mode,
-                          loss = losses, metrics = metrics) # recompile to apply the change
+                          loss=losses, metrics=metrics) # recompile to apply the change
 
     else:
         for i in range(len(model.layers)):
             model.layers[i].trainable = True
         model.compile(optimizer=optimizer, sample_weight_mode=sample_weight_mode,
-                      loss = losses, metrics = metrics) # recompile to apply the change
+                      loss=losses, metrics=metrics) # recompile to apply the change
 
     print('Train on {} samples, val on {} samples, with batch size {}, input_shape {}.'.format(num_train, num_val, args.batch_size, args.model_input_shape))
     model.fit_generator(generator=train_generator,
