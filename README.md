@@ -8,9 +8,9 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 - [x] Xception
 - [x] ResNet50
 - [x] MobileNetV2
-- [x] MobilenetV3(Large/Small)
-- [x] PeleeNet ([paper](https://arxiv.org/abs/1804.06882))
-- [x] GhostNet ([paper](https://arxiv.org/abs/1911.11907))
+- [x] MobileNetV3(Large/Small)
+- [x] PeleeNet([paper](https://arxiv.org/abs/1804.06882))
+- [x] GhostNet([paper](https://arxiv.org/abs/1911.11907))
 
 #### Head
 - [x] ASPP

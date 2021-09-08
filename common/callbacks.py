@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 # -*- coding=utf-8 -*-
 """custom model callbacks."""
-import os, sys, random, tempfile
-import numpy as np
+import os
 import glob
-from tensorflow_model_optimization.sparsity import keras as sparsity
 from tensorflow.keras.callbacks import Callback
 
 from eval import eval_mIOU
