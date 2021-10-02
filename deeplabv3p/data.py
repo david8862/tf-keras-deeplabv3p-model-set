@@ -33,10 +33,10 @@ class SegmentationGenerator(Sequence):
         self.augment = augment
         self.is_eval = is_eval
 
-        # Preallocate memory
-        self.X = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype='float32')
-        self.Y = np.zeros((batch_size, input_shape[0]*input_shape[1], 1), dtype='float32')
-        self.PIXEL_WEIGHTS = np.zeros((batch_size, input_shape[0]*input_shape[1]), dtype='float32')
+        # Preallocate memory for batch input/output data
+        self.batch_images = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype='float32')
+        self.batch_labels = np.zeros((batch_size, input_shape[0]*input_shape[1], 1), dtype='float32')
+        self.batch_label_weights = np.zeros((batch_size, input_shape[0]*input_shape[1]), dtype='float32')
 
     def get_batch_image_path(self, i):
         return self.image_path_list[i*self.batch_size:(i+1)*self.batch_size]
@@ -111,18 +111,18 @@ class SegmentationGenerator(Sequence):
             label = cv2.resize(label, self.input_shape[::-1], interpolation = cv2.INTER_NEAREST)
 
             label = label.astype('int32')
-            y = label.flatten()
+            label = label.flatten()
 
             # we reset all the invalid label value as 0(background) in training,
             # but as 255(invalid) in eval
             if self.is_eval:
-                y[y>(self.num_classes-1)] = 255
+                label[label > (self.num_classes-1)] = 255
             else:
-                y[y>(self.num_classes-1)] = 0
+                label[label > (self.num_classes-1)] = 0
 
             # append input image and label array
-            self.X[n] = image
-            self.Y[n]  = np.expand_dims(y, -1)
+            self.batch_images[n] = image
+            self.batch_labels[n]  = np.expand_dims(label, -1)
 
             ###########################################################################
             #
@@ -132,9 +132,9 @@ class SegmentationGenerator(Sequence):
 
             # Create adaptive pixels weights for all classes on one image,
             # according to pixel number of classes
-            class_list = np.unique(y)
+            class_list = np.unique(label)
             if len(class_list):
-                class_weights = class_weight.compute_class_weight('balanced', class_list, y)
+                class_weights = class_weight.compute_class_weight('balanced', class_list, label)
                 class_weights = {class_id : weight for class_id , weight in zip(class_list, class_weights)}
             # class_weigts dict would be like:
             # {
@@ -143,16 +143,16 @@ class SegmentationGenerator(Sequence):
             #   15: 1.0195474451419193
             # }
             for class_id in class_list:
-                np.putmask(self.PIXEL_WEIGHTS[n], y==class_id, class_weights[class_id])
+                np.putmask(self.batch_label_weights[n], label==class_id, class_weights[class_id])
 
         # A trick of keras data generator: the last item yield
         # from a generator could be a sample weights array
-        sample_weight_dict = {'pred_mask' : self.PIXEL_WEIGHTS}
+        sample_weight_dict = {'pred_mask' : self.batch_label_weights}
 
         if self.weighted_type == 'adaptive':
-            return self.X, self.Y, sample_weight_dict
+            return self.batch_images, self.batch_labels, sample_weight_dict
         else:
-            return self.X, self.Y
+            return self.batch_images, self.batch_labels
 
     def on_epoch_end(self):
         # Shuffle dataset for next epoch
