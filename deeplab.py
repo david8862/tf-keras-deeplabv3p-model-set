@@ -3,7 +3,6 @@
 """
 Run a Deeplabv3plus semantic segmentation model on test images.
 """
-
 import colorsys
 import os, sys, argparse
 import numpy as np
@@ -107,7 +106,7 @@ class DeepLab(object):
             mask = crf_postprocess(image, mask, zero_unsure=False)
 
         # resize mask back to origin image size
-        mask = mask_resize_fast(mask, tuple(reversed(image_shape)))
+        mask = mask_resize_fast(mask, image_shape[::-1])
 
         return mask
 
@@ -211,7 +210,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--model_input_shape', type=str,
-        help='model input size as <height>x<width>, default ' +
+        help='model input shape as <height>x<width>, default ' +
         str(DeepLab.get_defaults("model_input_shape")[0])+'x'+str(DeepLab.get_defaults("model_input_shape")[1]),
         default=str(DeepLab.get_defaults("model_input_shape")[0])+'x'+str(DeepLab.get_defaults("model_input_shape")[1])
     )

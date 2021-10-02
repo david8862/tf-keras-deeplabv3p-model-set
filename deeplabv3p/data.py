@@ -15,7 +15,7 @@ class SegmentationGenerator(Sequence):
     def __init__(self, dataset_path, data_list,
                  batch_size=1,
                  num_classes=21,
-                 target_size=(512, 512),
+                 input_shape=(512, 512),
                  weighted_type=None,
                  is_eval=False,
                  augment=True):
@@ -28,15 +28,15 @@ class SegmentationGenerator(Sequence):
 
         self.num_classes = num_classes
         self.batch_size = batch_size
-        self.target_size = target_size
+        self.input_shape = input_shape
         self.weighted_type = weighted_type
         self.augment = augment
         self.is_eval = is_eval
 
         # Preallocate memory
-        self.X = np.zeros((batch_size, target_size[1], target_size[0], 3), dtype='float32')
-        self.Y = np.zeros((batch_size, target_size[1]*target_size[0], 1), dtype='float32')
-        self.PIXEL_WEIGHTS = np.zeros((batch_size, target_size[1]*target_size[0]), dtype='float32')
+        self.X = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype='float32')
+        self.Y = np.zeros((batch_size, input_shape[0]*input_shape[1], 1), dtype='float32')
+        self.PIXEL_WEIGHTS = np.zeros((batch_size, input_shape[0]*input_shape[1]), dtype='float32')
 
     def get_batch_image_path(self, i):
         return self.image_path_list[i*self.batch_size:(i+1)*self.batch_size]
@@ -56,7 +56,8 @@ class SegmentationGenerator(Sequence):
                                                         self.label_path_list[i*self.batch_size:(i+1)*self.batch_size])):
 
             # Load image and label array
-            image = cv2.imread(image_path, cv2.IMREAD_COLOR) # cv2.IMREAD_COLOR/cv2.IMREAD_GRAYSCALE/cv2.IMREAD_UNCHANGED
+            #image = cv2.imread(image_path, cv2.IMREAD_COLOR) # cv2.IMREAD_COLOR/cv2.IMREAD_GRAYSCALE/cv2.IMREAD_UNCHANGED
+            image = np.array(Image.open(image_path))
             label = np.array(Image.open(label_path))
 
             # we reset all the invalid label value as 0(background) in training,
@@ -99,15 +100,15 @@ class SegmentationGenerator(Sequence):
                 image = random_blur(image)
 
                 # random crop image & label
-                image, label = random_crop(image, label, self.target_size)
+                image, label = random_crop(image, label, self.input_shape)
 
                 # random do histogram equalization using CLAHE
                 image = random_histeq(image)
 
 
             # Resize image & label mask to model input shape
-            image = cv2.resize(image, self.target_size)
-            label = cv2.resize(label, self.target_size, interpolation = cv2.INTER_NEAREST)
+            image = cv2.resize(image, self.input_shape[::-1])
+            label = cv2.resize(label, self.input_shape[::-1], interpolation = cv2.INTER_NEAREST)
 
             label = label.astype('int32')
             y = label.flatten()

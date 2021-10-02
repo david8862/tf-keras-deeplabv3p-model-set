@@ -29,7 +29,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 
 
 #### Train tech
-- [x] Transfer training from Imagenet/PascalVOC
+- [x] Transfer training from ImageNet/PascalVOC
 - [x] Dynamic learning rate decay (Cosine/Exponential/Polynomial/PiecewiseConstant)
 - [x] Mixed precision training (valid for TF-2.1 and above)
 - [x] Weights Average policy for optimizer (EMA/SWA/Lookahead, valid for TF-2.x with tfa)

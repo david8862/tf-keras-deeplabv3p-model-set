@@ -311,7 +311,7 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
     eval_generator = SegmentationGenerator(dataset_path, dataset,
                                             1,  #batch_size
                                             num_classes,
-                                            target_size=model_input_shape[::-1],
+                                            input_shape=model_input_shape,
                                             weighted_type=None,
                                             is_eval=True,
                                             augment=False)
@@ -448,6 +448,12 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
 
 #load TF 1.x frozen pb graph
 def load_graph(model_path):
+    # check tf version to be compatible with TF 2.x
+    global tf
+    if tf.__version__.startswith('2'):
+        import tensorflow.compat.v1 as tf
+        tf.disable_eager_execution()
+
     # We parse the graph_def file
     with tf.gfile.GFile(model_path, "rb") as f:
         graph_def = tf.GraphDef()
@@ -525,7 +531,7 @@ def main():
 
     parser.add_argument(
         '--model_input_shape', type=str,
-        help='model image input size as <height>x<width>, default=%(default)s', default='512x512')
+        help='model image input shape as <height>x<width>, default=%(default)s', default='512x512')
 
     parser.add_argument(
         '--do_crf', action="store_true",

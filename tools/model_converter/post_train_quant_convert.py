@@ -25,7 +25,7 @@ def post_train_quant_convert(keras_model_file, dataset_path, dataset, sample_num
     data_gen = SegmentationGenerator(dataset_path, dataset,
                                             1,  #batch_size
                                             1,  #num_classes, here we don't really use it
-                                            target_size=model_input_shape[::-1],
+                                            input_shape=model_input_shape,
                                             weighted_type=None,
                                             is_eval=False,
                                             augment=True)

@@ -22,7 +22,7 @@ from deeplabv3p.metrics import mIOU
 from deeplabv3p.postprocess_np import crf_postprocess
 
 
-def validate_deeplab_model(model_path, image_file, class_names, model_image_size, do_crf, label_file, loop_count):
+def validate_deeplab_model(model_path, image_file, class_names, model_input_shape, do_crf, label_file, loop_count):
     # load model
     custom_object_dict = get_custom_objects()
     model = load_model(model_path, compile=False, custom_objects=custom_object_dict)
@@ -35,7 +35,7 @@ def validate_deeplab_model(model_path, image_file, class_names, model_image_size
 
     # prepare input image
     img = Image.open(image_file)
-    image_data = preprocess_image(img, model_image_size)
+    image_data = preprocess_image(img, model_input_shape)
     image = image_data[0].astype('uint8')
     #origin image shape, in (width, height) format
     origin_image_size = img.size
@@ -50,7 +50,7 @@ def validate_deeplab_model(model_path, image_file, class_names, model_image_size
     end = time.time()
     print("Average Inference time: {:.8f}ms".format((end - start) * 1000 /loop_count))
 
-    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file)
+    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file)
 
 
 def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, label_file, loop_count):
@@ -63,7 +63,7 @@ def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, lab
     assert len(input_tensors) == 1, 'invalid input tensor number.'
 
     batch, height, width, channel = input_tensors[0].shape
-    model_image_size = (height, width)
+    model_input_shape = (height, width)
 
     output_tensors = []
     for i, output_tensor in enumerate(sess.get_outputs()):
@@ -78,7 +78,7 @@ def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, lab
 
     # prepare input image
     img = Image.open(image_file)
-    image_data = preprocess_image(img, model_image_size)
+    image_data = preprocess_image(img, model_input_shape)
     image = image_data[0].astype('uint8')
     #origin image shape, in (width, height) format
     origin_image_size = img.size
@@ -95,7 +95,7 @@ def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, lab
     end = time.time()
     print("Average Inference time: {:.8f}ms".format((end - start) * 1000 /loop_count))
 
-    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file)
+    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file)
 
 
 def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, label_file, loop_count):
@@ -114,11 +114,11 @@ def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, labe
         # should be MNN.Tensor_DimensionType_Caffe_C4, unsupported now
         raise ValueError('unsupported input tensor dimension type')
 
-    model_image_size = (height, width)
+    model_input_shape = (height, width)
 
     # prepare input image
     img = Image.open(image_file)
-    image_data = preprocess_image(img, model_image_size)
+    image_data = preprocess_image(img, model_input_shape)
     image = image_data[0].astype('uint8')
     #origin image shape, in (width, height) format
     origin_image_size = img.size
@@ -166,7 +166,7 @@ def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, labe
         raise ValueError('unsupported output tensor dimension type')
 
     prediction.append(output_data)
-    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file)
+    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file)
 
 
 def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label_file, loop_count):
@@ -219,7 +219,7 @@ def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label
     output_tensor = graph.get_tensor_by_name(output_tensor_name)
 
     batch, height, width, channel = image_input.shape
-    model_image_size = (int(height), int(width))
+    model_input_shape = (int(height), int(width))
 
     num_classes = output_tensor.shape[-1]
     if class_names:
@@ -228,7 +228,7 @@ def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label
 
     # prepare input image
     img = Image.open(image_file)
-    image_data = preprocess_image(img, model_image_size)
+    image_data = preprocess_image(img, model_input_shape)
     image = image_data[0].astype('uint8')
     #origin image shape, in (width, height) format
     origin_image_size = img.size
@@ -247,7 +247,7 @@ def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label
                 })
     end = time.time()
     print("Average Inference time: {:.8f}ms".format((end - start) * 1000 /loop_count))
-    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file)
+    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file)
 
 
 def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, label_file, loop_count):
@@ -266,7 +266,7 @@ def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, l
 
     height = input_details[0]['shape'][1]
     width = input_details[0]['shape'][2]
-    model_image_size = (height, width)
+    model_input_shape = (height, width)
 
     num_classes = output_details[0]['shape'][-1]
     if class_names:
@@ -275,7 +275,7 @@ def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, l
 
     # prepare input image
     img = Image.open(image_file)
-    image_data = preprocess_image(img, model_image_size)
+    image_data = preprocess_image(img, model_input_shape)
     image = image_data[0].astype('uint8')
     #origin image shape, in (width, height) format
     origin_image_size = img.size
@@ -296,14 +296,14 @@ def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, l
         output_data = interpreter.get_tensor(output_detail['index'])
         prediction.append(output_data)
 
-    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file)
+    handle_prediction(prediction, image, np.array(img), num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file)
     return
 
 
-def handle_prediction(prediction, image, origin_image, num_classes, class_names, model_image_size, origin_image_size, do_crf, label_file):
+def handle_prediction(prediction, image, origin_image, num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file):
     # generate prediction mask,
     # add CRF postprocess if need
-    prediction = np.argmax(prediction, -1)[0].reshape(model_image_size)
+    prediction = np.argmax(prediction, -1)[0].reshape(model_input_shape)
     if do_crf:
         prediction = crf_postprocess(image, prediction, zero_unsure=False)
     prediction = mask_resize_fast(prediction, origin_image_size)
@@ -330,7 +330,7 @@ def main():
     parser.add_argument('--model_path', help='model file to predict', type=str, required=True)
 
     parser.add_argument('--image_file', help='image file to predict', type=str, required=True)
-    parser.add_argument('--model_image_size', help='model image input size as <height>x<width>, default=%(default)s', type=str, default='512x512')
+    parser.add_argument('--model_input_shape', help='model image input shape as <height>x<width>, default=%(default)s', type=str, default='512x512')
     parser.add_argument('--do_crf', action="store_true", help='whether to add CRF postprocess for model output', default=False)
     parser.add_argument('--label_file', help='segmentation label image file', type=str, required=False, default=None)
     parser.add_argument('--classes_path', help='path to class name definitions', type=str, required=False)
@@ -346,8 +346,8 @@ def main():
         class_names = ['background'] + class_names
 
     # param parse
-    height, width = args.model_image_size.split('x')
-    model_image_size = (int(height), int(width))
+    height, width = args.model_input_shape.split('x')
+    model_input_shape = (int(height), int(width))
 
     # support of tflite model
     if args.model_path.endswith('.tflite'):
@@ -363,7 +363,7 @@ def main():
         validate_deeplab_model_onnx(args.model_path, args.image_file, class_names, args.do_crf, args.label_file, args.loop_count)
     # normal keras h5 model
     elif args.model_path.endswith('.h5'):
-        validate_deeplab_model(args.model_path, args.image_file, class_names, model_image_size, args.do_crf, args.label_file, args.loop_count)
+        validate_deeplab_model(args.model_path, args.image_file, class_names, model_input_shape, args.do_crf, args.label_file, args.loop_count)
     else:
         raise ValueError('invalid model file')
 

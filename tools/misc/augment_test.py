@@ -44,7 +44,7 @@ def main():
     data_generator = SegmentationGenerator(args.dataset_path, dataset,
                                            batch_size=1,
                                            num_classes=num_classes,
-                                           target_size=model_input_shape[::-1],
+                                           input_shape=model_input_shape,
                                            weighted_type=None,
                                            is_eval=False,
                                            augment=True)

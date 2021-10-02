@@ -363,7 +363,7 @@ def random_gridmask(image, label, prob=0.2):
 
 def random_crop(image, label, crop_shape, prob=.1):
     """
-    Random crop a specific size area from image
+    Random crop a specific shape area from image
     and label
 
     # Arguments
@@ -372,7 +372,7 @@ def random_crop(image, label, crop_shape, prob=.1):
         label: origin label for vertical flip
             numpy array containing segment label mask
         crop_shape: target crop shape,
-            list or tuple in (width, height).
+            list or tuple in (height, width).
         prob: probability for crop,
             scalar to control the crop probability.
 
@@ -386,15 +386,15 @@ def random_crop(image, label, crop_shape, prob=.1):
 
     crop = rand() < prob
     if crop:
-        if (crop_shape[0] < image.shape[1]) and (crop_shape[1] < image.shape[0]):
-            x = random.randrange(image.shape[1]-crop_shape[0])
-            y = random.randrange(image.shape[0]-crop_shape[1])
+        if (crop_shape[0] < image.shape[0]) and (crop_shape[1] < image.shape[1]):
+            x = random.randrange(image.shape[1]-crop_shape[1])
+            y = random.randrange(image.shape[0]-crop_shape[0])
 
-            image = image[y:y+crop_shape[1], x:x+crop_shape[0], :]
-            label = label[y:y+crop_shape[1], x:x+crop_shape[0]]
+            image = image[y:y+crop_shape[0], x:x+crop_shape[1], :]
+            label = label[y:y+crop_shape[0], x:x+crop_shape[1]]
         else:
-            image = cv2.resize(image, crop_shape)
-            label = cv2.resize(label, crop_shape, interpolation = cv2.INTER_NEAREST)
+            image = cv2.resize(image, crop_shape[::-1])
+            label = cv2.resize(label, crop_shape[::-1], interpolation = cv2.INTER_NEAREST)
 
     return image, label
 
@@ -433,7 +433,7 @@ def denormalize_image(image):
     return image
 
 
-def preprocess_image(image, model_image_size):
+def preprocess_image(image, model_input_shape):
     """
     Prepare model input image data with
     resize, normalize and dim expansion
@@ -441,13 +441,13 @@ def preprocess_image(image, model_image_size):
     # Arguments
         image: origin input image
             PIL Image object containing image data
-        model_image_size: model input image size
+        model_input_shape: model input image shape
             tuple of format (height, width).
 
     # Returns
         image_data: numpy array of image data for model input.
     """
-    resized_image = image.resize(model_image_size, Image.BICUBIC)
+    resized_image = image.resize(model_input_shape[::-1], Image.BICUBIC)
     image_data = np.asarray(resized_image).astype('float32')
     #image_data = normalize_image(image_data)
     image_data = np.expand_dims(image_data, 0)

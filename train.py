@@ -84,7 +84,7 @@ def main(args):
     train_generator = SegmentationGenerator(args.dataset_path, dataset[:num_train],
                                             args.batch_size,
                                             num_classes,
-                                            target_size=args.model_input_shape[::-1],
+                                            input_shape=args.model_input_shape,
                                             weighted_type=args.weighted_type,
                                             is_eval=False,
                                             augment=True)
@@ -92,7 +92,7 @@ def main(args):
     valid_generator = SegmentationGenerator(args.dataset_path, dataset[num_train:],
                                             args.batch_size,
                                             num_classes,
-                                            target_size=args.model_input_shape[::-1],
+                                            input_shape=args.model_input_shape,
                                             weighted_type=args.weighted_type,
                                             is_eval=False,
                                             augment=False)
@@ -181,7 +181,7 @@ def main(args):
                         workers=1,
                         use_multiprocessing=False,
                         max_queue_size=10,
-                        callbacks = callbacks)
+                        callbacks=callbacks)
 
     # Wait 2 seconds for next stage
     time.sleep(2)
@@ -238,7 +238,7 @@ def main(args):
                         workers=1,
                         use_multiprocessing=False,
                         max_queue_size=10,
-                        callbacks = callbacks)
+                        callbacks=callbacks)
 
     # Finally store model
     model.save(os.path.join(log_dir, 'trained_final.h5'))
