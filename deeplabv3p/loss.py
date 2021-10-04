@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
-import tensorflow as tf
+#import tensorflow as tf
 import tensorflow.keras.backend as K
 
 
 def sparse_crossentropy_ignoring_last_label(y_true, y_pred):
     num_classes = K.shape(y_pred)[-1]
-    y_true = K.one_hot(tf.cast(y_true[..., 0], tf.int32), num_classes+1)[..., :-1]
+    y_true = K.one_hot(K.cast(y_true[..., 0], 'int32'), num_classes+1)[..., :-1]
+    y_true = K.cast(y_true, 'float32')
+    y_pred = K.cast(y_pred, 'float32')
     return K.categorical_crossentropy(y_true, y_pred)
 
 def sparse_crossentropy(y_true, y_pred):
     num_classes = K.shape(y_pred)[-1]
-    y_true = K.one_hot(tf.cast(y_true[..., 0], tf.int32), num_classes)
+    y_true = K.one_hot(K.cast(y_true[..., 0], 'int32'), num_classes)
+    y_true = K.cast(y_true, 'float32')
+    y_pred = K.cast(y_pred, 'float32')
     return K.categorical_crossentropy(y_true, y_pred)
 
 
@@ -61,7 +65,7 @@ class WeightedSparseCategoricalCrossEntropy(object):
 
   def weighted_sparse_categorical_crossentropy(self, y_true, y_pred):
     num_classes = len(self.weights)
-    y_true = K.one_hot(tf.cast(y_true[..., 0], tf.int32), num_classes)
+    y_true = K.one_hot(K.cast(y_true[..., 0], 'int32'), num_classes)
     if self.from_logits:
         y_pred = K.softmax(y_pred)
 

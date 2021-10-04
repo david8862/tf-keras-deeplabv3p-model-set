@@ -20,7 +20,7 @@ from tensorflow.keras.utils import multi_gpu_model
 from deeplabv3p.model import get_deeplabv3p_model
 from deeplabv3p.postprocess_np import crf_postprocess
 from common.utils import get_classes, optimize_tf_gpu, visualize_segmentation
-from common.data_utils import preprocess_image, mask_resize, mask_resize_fast
+from common.data_utils import preprocess_image, mask_resize
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -91,7 +91,7 @@ class DeepLab(object):
         print("Inference time: {:.8f}s".format(end - start))
 
         # show segmentation result
-        image_array = visualize_segmentation(np.array(image), out_mask, class_names=self.class_names, ignore_count_threshold=500)
+        image_array = visualize_segmentation(np.array(image), out_mask, class_names=self.class_names)
         return Image.fromarray(image_array)
 
 
@@ -106,7 +106,7 @@ class DeepLab(object):
             mask = crf_postprocess(image, mask, zero_unsure=False)
 
         # resize mask back to origin image size
-        mask = mask_resize_fast(mask, image_shape[::-1])
+        mask = mask_resize(mask, image_shape[::-1])
 
         return mask
 

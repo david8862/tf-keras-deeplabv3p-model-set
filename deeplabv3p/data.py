@@ -108,7 +108,7 @@ class SegmentationGenerator(Sequence):
 
             # Resize image & label mask to model input shape
             image = cv2.resize(image, self.input_shape[::-1])
-            label = cv2.resize(label, self.input_shape[::-1], interpolation = cv2.INTER_NEAREST)
+            label = cv2.resize(label, self.input_shape[::-1], interpolation=cv2.INTER_NEAREST)
 
             label = label.astype('int32')
             label = label.flatten()

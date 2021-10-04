@@ -456,57 +456,12 @@ def preprocess_image(image, model_input_shape):
 
 def mask_resize(mask, target_size):
     """
-    Resize predict segmentation mask array to target size
-    with bilinear interpolation
-
-    # Arguments
-        mask: predict mask array to be resize
-            uint8 numpy array with shape (height, width, 1)
-        target_size: target image size,
-            tuple of format (width, height).
-
-    # Returns
-        resize_mask: resized mask array.
-
-    """
-    dst_w, dst_h = target_size # dest width & height
-    src_h, src_w = mask.shape[:2] # src width & height
-
-    if src_h == dst_h and src_w == dst_w:
-        return mask.copy()
-
-    scale_x = float(src_w) / dst_w # resize scale for width
-    scale_y = float(src_h) / dst_h # resize scale for height
-
-    # create & go through the target image array
-    resize_mask = np.zeros((dst_h, dst_w), dtype=np.uint8)
-    for dst_y in range(dst_h):
-        for dst_x in range(dst_w):
-            # mapping dest point back to src point
-            src_x = (dst_x + 0.5) * scale_x - 0.5
-            src_y = (dst_y + 0.5) * scale_y - 0.5
-            # calculate round point in src image
-            src_x_0 = int(np.floor(src_x))
-            src_y_0 = int(np.floor(src_y))
-            src_x_1 = min(src_x_0 + 1, src_w - 1)
-            src_y_1 = min(src_y_0 + 1, src_h - 1)
-
-            # Bilinear interpolation
-            value0 = (src_x_1 - src_x) * mask[src_y_0, src_x_0] + (src_x - src_x_0) * mask[src_y_0, src_x_1]
-            value1 = (src_x_1 - src_x) * mask[src_y_1, src_x_0] + (src_x - src_x_0) * mask[src_y_1, src_x_1]
-            resize_mask[dst_y, dst_x] = int((src_y_1 - src_y) * value0 + (src_y - src_y_0) * value1)
-
-    return resize_mask
-
-
-def mask_resize_fast(mask, target_size):
-    """
     Use cv2 to do a quick resize on predict
     segmentation mask array to target size
 
     # Arguments
         mask: predict mask array to be resize
-            uint8 numpy array with shape (height, width, 1)
+            uint8 numpy array with shape (height, width)
         target_size: target image size,
             tuple of format (width, height).
 
@@ -514,10 +469,10 @@ def mask_resize_fast(mask, target_size):
         resize_mask: resized mask array.
 
     """
-    mask = cv2.merge([mask, mask, mask]).astype('uint8')
-    #resize_mask = cv2.resize(mask, target_size, cv2.INTER_AREA)
-    resize_mask = cv2.resize(mask, target_size, cv2.INTER_NEAREST)
-    (resize_mask, _, _) = cv2.split(np.array(resize_mask))
+    #mask = cv2.merge([mask, mask, mask]).astype('uint8')
+    #resize_mask = cv2.resize(mask, target_size, interpolation=cv2.INTER_NEAREST)
+    #(resize_mask, _, _) = cv2.split(np.array(resize_mask))
 
+    resize_mask = cv2.resize(mask, target_size, interpolation=cv2.INTER_NEAREST)
     return resize_mask
 

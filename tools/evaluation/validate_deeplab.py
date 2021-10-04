@@ -16,7 +16,7 @@ from tensorflow.lite.python import interpreter as interpreter_wrapper
 import tensorflow as tf
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
-from common.data_utils import preprocess_image, mask_resize, mask_resize_fast
+from common.data_utils import preprocess_image, mask_resize
 from common.utils import get_custom_objects, get_classes, visualize_segmentation
 from deeplabv3p.metrics import mIOU
 from deeplabv3p.postprocess_np import crf_postprocess
@@ -306,7 +306,7 @@ def handle_prediction(prediction, image, origin_image, num_classes, class_names,
     prediction = np.argmax(prediction, -1)[0].reshape(model_input_shape)
     if do_crf:
         prediction = crf_postprocess(image, prediction, zero_unsure=False)
-    prediction = mask_resize_fast(prediction, origin_image_size)
+    prediction = mask_resize(prediction, origin_image_size)
 
     title_str = None
     label = None
@@ -319,7 +319,7 @@ def handle_prediction(prediction, image, origin_image, num_classes, class_names,
         title_str = 'Predict Segmentation\nmIOU: '+str(mIOU(label, prediction))
         gt_title_str = 'GT Segmentation'
 
-    image_array = visualize_segmentation(origin_image, prediction, label, class_names=class_names, title=title_str, gt_title=gt_title_str, ignore_count_threshold=500)
+    image_array = visualize_segmentation(origin_image, prediction, label, class_names=class_names, title=title_str, gt_title=gt_title_str)
 
     # show result
     Image.fromarray(image_array).show()

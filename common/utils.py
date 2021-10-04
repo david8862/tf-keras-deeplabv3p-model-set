@@ -241,7 +241,7 @@ def label_to_color_image(label):
     return colormap[label]
 
 
-def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=0.7, ignore_count_threshold=100, title=None, gt_title=None):
+def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=0.7, ignore_count_threshold=1, title=None, gt_title=None):
     """
     Visualize segmentation mask on input image, using PascalVOC
     Segmentation color map
