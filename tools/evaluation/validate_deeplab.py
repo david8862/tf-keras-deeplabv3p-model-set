@@ -16,7 +16,7 @@ from tensorflow.lite.python import interpreter as interpreter_wrapper
 import tensorflow as tf
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
-from common.data_utils import preprocess_image, mask_resize
+from common.data_utils import preprocess_image, denormalize_image, mask_resize
 from common.utils import get_custom_objects, get_classes, visualize_segmentation
 from deeplabv3p.metrics import mIOU
 from deeplabv3p.postprocess_np import crf_postprocess
@@ -36,7 +36,7 @@ def validate_deeplab_model(model_path, image_file, class_names, model_input_shap
     # prepare input image
     img = Image.open(image_file)
     image_data = preprocess_image(img, model_input_shape)
-    image = image_data[0].astype('uint8')
+    image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
     origin_image_size = img.size
 
@@ -79,7 +79,7 @@ def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, lab
     # prepare input image
     img = Image.open(image_file)
     image_data = preprocess_image(img, model_input_shape)
-    image = image_data[0].astype('uint8')
+    image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
     origin_image_size = img.size
 
@@ -119,13 +119,18 @@ def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, labe
     # prepare input image
     img = Image.open(image_file)
     image_data = preprocess_image(img, model_input_shape)
-    image = image_data[0].astype('uint8')
+    image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
     origin_image_size = img.size
 
-    # use a temp tensor to copy data
-    tmp_input = MNN.Tensor(input_shape, input_tensor.getDataType(),\
-                    image_data, input_tensor.getDimensionType())
+    # create a temp tensor to copy data
+    # use TF NHWC layout to align with image data array
+    # TODO: currently MNN python binding have mem leak when creating MNN.Tensor
+    # from numpy array, only from tuple is good. So we convert input image to tuple
+    tmp_input_shape = (batch, height, width, channel)
+    input_elementsize = reduce(mul, tmp_input_shape)
+    tmp_input = MNN.Tensor(tmp_input_shape, input_tensor.getDataType(),\
+                    tuple(image_data.reshape(input_elementsize, -1)), MNN.Tensor_DimensionType_Tensorflow)
 
     # predict once first to bypass the model building time
     input_tensor.copyFrom(tmp_input)
@@ -158,7 +163,7 @@ def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, labe
     output_tensor.copyToHostTensor(tmp_output)
 
     output_data = np.array(tmp_output.getData(), dtype=float).reshape(output_shape)
-    # our postprocess code based on TF channel last format, so if the output format
+    # our postprocess code based on TF NHWC layout, so if the output format
     # doesn't match, we need to transpose
     if output_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe:
         output_data = output_data.transpose((0,2,3,1))
@@ -229,7 +234,7 @@ def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label
     # prepare input image
     img = Image.open(image_file)
     image_data = preprocess_image(img, model_input_shape)
-    image = image_data[0].astype('uint8')
+    image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
     origin_image_size = img.size
 
@@ -276,7 +281,7 @@ def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, l
     # prepare input image
     img = Image.open(image_file)
     image_data = preprocess_image(img, model_input_shape)
-    image = image_data[0].astype('uint8')
+    image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
     origin_image_size = img.size
 

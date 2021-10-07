@@ -237,10 +237,10 @@ def Deeplabv3pMobileNetV2(input_shape=(512, 512, 3),
         img_input = input_tensor
 
     # normalize input image
-    img_norm = Lambda(normalize, name='input_normalize')(img_input)
+    #img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, skip_feature, backbone_len = MobileNetV2_body(img_norm, OS, alpha, weights=weights)
+    x, skip_feature, backbone_len = MobileNetV2_body(img_input, OS, alpha, weights=weights)
 
     # ASPP block
     x = ASPP_block(x, OS)
@@ -315,10 +315,10 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
         img_input = input_tensor
 
     # normalize input image
-    img_norm = Lambda(normalize, name='input_normalize')(img_input)
+    #img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, _, backbone_len = MobileNetV2_body(img_norm, OS, alpha, weights=weights)
+    x, _, backbone_len = MobileNetV2_body(img_input, OS, alpha, weights=weights)
 
     # use ASPP Lite block & no decode block
     x = ASPP_Lite_block(x)

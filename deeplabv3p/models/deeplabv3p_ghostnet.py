@@ -517,10 +517,10 @@ def Deeplabv3pGhostNet(input_shape=(512, 512, 3),
         img_input = input_tensor
 
     # normalize input image
-    img_norm = Lambda(normalize, name='input_normalize')(img_input)
+    #img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, skip_feature, backbone_len = GhostNet(include_top=False, input_tensor=img_norm, weights=weights, OS=OS)
+    x, skip_feature, backbone_len = GhostNet(include_top=False, input_tensor=img_input, weights=weights, OS=OS)
 
     # ASPP block
     x = ASPP_block(x, OS)
@@ -584,10 +584,10 @@ def Deeplabv3pLiteGhostNet(input_shape=(512, 512, 3),
         img_input = input_tensor
 
     # normalize input image
-    img_norm = Lambda(normalize, name='input_normalize')(img_input)
+    #img_norm = Lambda(normalize, name='input_normalize')(img_input)
 
     # backbone body for feature extract
-    x, _, backbone_len = GhostNet(include_top=False, input_tensor=img_norm, weights=weights, OS=OS)
+    x, _, backbone_len = GhostNet(include_top=False, input_tensor=img_input, weights=weights, OS=OS)
 
     # use ASPP Lite block & no decode block
     x = ASPP_Lite_block(x)

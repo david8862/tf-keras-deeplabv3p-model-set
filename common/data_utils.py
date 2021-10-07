@@ -449,7 +449,7 @@ def preprocess_image(image, model_input_shape):
     """
     resized_image = image.resize(model_input_shape[::-1], Image.BICUBIC)
     image_data = np.asarray(resized_image).astype('float32')
-    #image_data = normalize_image(image_data)
+    image_data = normalize_image(image_data)
     image_data = np.expand_dims(image_data, 0)
     return image_data
 

@@ -177,7 +177,7 @@ void deeplab_postprocess(const Tensor* mask_tensor, uint8_t* mask_array, std::ve
 }
 
 
-//Resize image to model input shape
+// Resize image to model input shape
 uint8_t* image_resize(uint8_t* inputImage, int image_width, int image_height, int image_channel, int input_width, int input_height, int input_channel)
 {
     // assume the data channel match
@@ -192,6 +192,31 @@ uint8_t* image_resize(uint8_t* inputImage, int image_width, int image_height, in
                      input_image, input_width, input_height, 0, image_channel);
 
     return input_image;
+}
+
+
+// Nearest resize predict mask
+uint8_t* mask_resize(uint8_t* input_mask, int mask_width, int mask_height, int target_width, int target_height)
+{
+    float scale_w = float(mask_width) / float(target_width);
+    float scale_h = float(mask_height) / float(target_height);
+
+    uint8_t* resized_mask = (uint8_t*)malloc(target_height * target_width * sizeof(uint8_t));
+    if (resized_mask == nullptr) {
+        MNN_PRINT("Can't alloc memory\n");
+        exit(-1);
+    }
+
+    // go through resized mask to get nearest value
+    for (int h = 0; h < target_height; h++) {
+        for (int w = 0; w < target_width; w++) {
+            int mask_x = int(w * scale_w);
+            int mask_y = int(h * scale_h);
+            resized_mask[h*target_width + w] = input_mask[mask_y*mask_width + mask_x];
+        }
+    }
+
+    return resized_mask;
 }
 
 
@@ -357,7 +382,7 @@ void RunInference(Settings* s) {
     int save_width, save_height;
     if (s->keep_shape) {
         // Resize the prediction mask back to original image shape
-        uint8_t* origin_mask_array = image_resize(mask_array, mask_width, mask_height, 1, image_width, image_height, 1);
+        uint8_t* origin_mask_array = mask_resize(mask_array, mask_width, mask_height, image_width, image_height);
         // free prediction mask
         free(mask_array);
         mask_array = origin_mask_array;

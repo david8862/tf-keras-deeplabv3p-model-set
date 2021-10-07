@@ -94,13 +94,22 @@ def deeplab_predict_mnn(interpreter, session, image_data):
     input_tensor = interpreter.getSessionInput(session)
     # get input shape
     input_shape = input_tensor.getShape()
+    if input_tensor.getDimensionType() == MNN.Tensor_DimensionType_Tensorflow:
+        batch, height, width, channel = input_shape
+    elif input_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe:
+        batch, channel, height, width = input_shape
+    else:
+        # should be MNN.Tensor_DimensionType_Caffe_C4, unsupported now
+        raise ValueError('unsupported input tensor dimension type')
 
-    # use a temp tensor to copy data
+    # create a temp tensor to copy data,
+    # use TF NHWC layout to align with image data array
     # TODO: currently MNN python binding have mem leak when creating MNN.Tensor
     # from numpy array, only from tuple is good. So we convert input image to tuple
-    input_elementsize = reduce(mul, input_shape)
-    tmp_input = MNN.Tensor(input_shape, input_tensor.getDataType(),\
-                    tuple(image_data.reshape(input_elementsize, -1)), input_tensor.getDimensionType())
+    tmp_input_shape = (batch, height, width, channel)
+    input_elementsize = reduce(mul, tmp_input_shape)
+    tmp_input = MNN.Tensor(tmp_input_shape, input_tensor.getDataType(),\
+                    tuple(image_data.reshape(input_elementsize, -1)), MNN.Tensor_DimensionType_Tensorflow)
 
     input_tensor.copyFrom(tmp_input)
     interpreter.runSession(session)
@@ -121,7 +130,7 @@ def deeplab_predict_mnn(interpreter, session, image_data):
     #tmp_output.printTensorData()
 
     output_data = np.array(tmp_output.getData(), dtype=float).reshape(output_shape)
-    # our postprocess code based on TF channel last format, so if the output format
+    # our postprocess code based on TF NHWC layout, so if the output format
     # doesn't match, we need to transpose
     if output_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe:
         output_data = output_data.transpose((0,2,3,1))
