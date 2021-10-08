@@ -96,10 +96,10 @@ def FastSCNN(num_classes,
         inputs = input_tensor
 
     # normalize input image
-    inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
+    #inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
 
     """## Step 1: Learning to DownSample"""
-    lds_layer = conv_block(inputs_norm, 'conv', 32, (3, 3), strides = (2, 2))
+    lds_layer = conv_block(inputs, 'conv', 32, (3, 3), strides = (2, 2))
     lds_layer = conv_block(lds_layer, 'ds', 48, (3, 3), strides = (2, 2))
     lds_layer = conv_block(lds_layer, 'ds', 64, (3, 3), strides = (2, 2))
 

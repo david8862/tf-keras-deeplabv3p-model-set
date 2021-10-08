@@ -42,8 +42,8 @@ struct Settings {
     int loop_count = 1;
     int number_of_threads = 4;
     int number_of_warmup_runs = 2;
-    float input_mean = 0.0f;
-    float input_std = 1.0f;
+    float input_mean = 127.5f;
+    float input_std = 127.5f;
     std::string model_name = "./model.mnn";
     std::string input_img_name = "./dog.jpg";
     std::string classes_file_name = "./classes.txt";

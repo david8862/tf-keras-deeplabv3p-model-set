@@ -21,6 +21,7 @@ import MNN
 import onnxruntime
 
 from common.utils import get_data_list, get_classes, get_custom_objects, optimize_tf_gpu, visualize_segmentation
+from common.data_utils import denormalize_image
 from deeplabv3p.data import SegmentationGenerator
 from deeplabv3p.metrics import mIOU
 from deeplabv3p.postprocess_np import crf_postprocess
@@ -354,7 +355,7 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
         else:
             raise ValueError('invalid model format')
 
-        image = image_data[0].astype('uint8')
+        image = denormalize_image(image_data[0])
         pred_mask = y_pred.reshape(model_input_shape)
         gt_mask = y_true.reshape(model_input_shape).astype('int')
 

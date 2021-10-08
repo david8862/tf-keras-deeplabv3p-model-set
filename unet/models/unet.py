@@ -23,9 +23,9 @@ def UNetStandard(num_classes,
         inputs = input_tensor
 
     # normalize input image
-    inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
+    #inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
 
-    conv1 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs_norm)
+    conv1 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs)
     conv1 = Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
     conv2 = Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool1)
@@ -92,9 +92,9 @@ def UNetLite(num_classes,
         inputs = input_tensor
 
     # normalize input image
-    inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
+    #inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
 
-    conv1 = SeparableConv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs_norm)
+    conv1 = SeparableConv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs)
     conv1 = SeparableConv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
     conv2 = SeparableConv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool1)
@@ -161,13 +161,13 @@ def UNetSimple(num_classes,
         inputs = input_tensor
 
     # normalize input image
-    inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
+    #inputs_norm= Lambda(normalize, name='input_normalize')(inputs)
 
 
     ### [First half of the network: downsampling inputs] ###
 
     # Entry block
-    x = Conv2D(32, 3, strides=2, padding="same")(inputs_norm)
+    x = Conv2D(32, 3, strides=2, padding="same")(inputs)
     x = BatchNormalization()(x)
     x = ReLU()(x)
 

@@ -236,6 +236,7 @@ void RunInference(Settings* s) {
   int input_channels = dims->data[3];
 
   if (s->verbose) LOG(INFO) << "input tensor info: "
+                            << "name " << interpreter->tensor(input)->name << ", "
                             << "type " << interpreter->tensor(input)->type << ", "
                             << "batch " << input_batch << ", "
                             << "height " << input_height << ", "
