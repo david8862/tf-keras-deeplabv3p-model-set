@@ -44,6 +44,16 @@ def deeplab_predict_onnx(model, image_data):
     # assume only 1 input tensor for image
     assert len(input_tensors) == 1, 'invalid input tensor number.'
 
+    # check if input layout is NHWC or NCHW
+    if input_tensors[0].shape[1] == 3:
+        batch, channel, height, width = input_tensors[0].shape  #NCHW
+    else:
+        batch, height, width, channel = input_tensors[0].shape  #NHWC
+
+    if input_tensors[0].shape[1] == 3:
+        # transpose image for NCHW layout
+        image_data = image_data.transpose((0,3,1,2))
+
     feed = {input_tensors[0].name: image_data}
     prediction = model.run(None, feed)
 

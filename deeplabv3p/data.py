@@ -57,8 +57,12 @@ class SegmentationGenerator(Sequence):
 
             # Load image and label array
             #image = cv2.imread(image_path, cv2.IMREAD_COLOR) # cv2.IMREAD_COLOR/cv2.IMREAD_GRAYSCALE/cv2.IMREAD_UNCHANGED
-            image = np.array(Image.open(image_path))
-            label = np.array(Image.open(label_path))
+            img = Image.open(image_path)
+            lbl = Image.open(label_path)
+            image = np.array(img)
+            label = np.array(lbl)
+            img.close()
+            lbl.close()
 
             # we reset all the invalid label value as 0(background) in training,
             # but as 255(invalid) in eval
