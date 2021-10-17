@@ -55,13 +55,11 @@ def main():
             break
         pbar.update(1)
 
-        # get ground truth keypoints (transformed)
-        image = image_data[0].astype('uint8')
-        gt_mask = gt_mask[0, :, 0].reshape(model_input_shape).astype('uint8')
+        #denormalize image
+        image = denormalize_image(image_data[0])
 
-        # currently data generator didn't normalize input image,
-        # so we bypass the denormalize step
-        #image = denormalize_image(image)
+        # get ground truth mask
+        gt_mask = gt_mask[0, :, 0].reshape(model_input_shape).astype('uint8')
 
         if args.show_mask:
             # render segmentation mask on image
