@@ -324,7 +324,7 @@ def generate_matrix(gt_mask, pre_mask, num_classes):
     return confusion_matrix
 
 
-def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_input_shape, do_crf=False, save_result=False, show_background=False):
+def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_input_shape, do_crf=False, save_result=False):
     num_classes = len(class_names)
 
     #prepare eval dataset generator
@@ -431,16 +431,8 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
         DICEs[class_name] = dice
         FREQs[class_name] = freq
 
-    if not show_background:
-        #get ride of background class info
-        display_class_names = copy.deepcopy(class_names)
-        display_class_names.remove('background')
-        display_confusion_matrix = copy.deepcopy(confusion_matrix[1:, 1:])
-        IOUs.pop('background')
-        num_classes = num_classes - 1
-    else:
-        display_class_names = class_names
-        display_confusion_matrix = confusion_matrix
+    #display_class_names = class_names
+    #display_confusion_matrix = confusion_matrix
 
     #sort IoU result by value, in descending order
     IOUs = OrderedDict(sorted(IOUs.items(), key=operator.itemgetter(1), reverse=True))
@@ -460,7 +452,7 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
 
     # Plot mIOU & confusion matrix
     plot_mIOU_result(IOUs, mIoU, num_classes)
-    plot_confusion_matrix(display_confusion_matrix, display_class_names, mIoU, normalize=True)
+    plot_confusion_matrix(confusion_matrix, class_names, mIoU, normalize=True)
 
     return mIoU
 
@@ -558,10 +550,6 @@ def main():
         help='whether to add CRF postprocess for model output', default=False)
 
     parser.add_argument(
-        '--show_background', default=False, action="store_true",
-        help='Show background evaluation info')
-
-    parser.add_argument(
         '--save_result', default=False, action="store_true",
         help='Save the segmentaion result image in result/segmentation dir')
 
@@ -571,10 +559,9 @@ def main():
     height, width = args.model_input_shape.split('x')
     model_input_shape = (int(height), int(width))
 
-    # add background class to match model & GT
+    # get class names
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
 
     model, model_format = load_eval_model(args.model_path)
 
@@ -582,7 +569,7 @@ def main():
     dataset = get_data_list(args.dataset_file)
 
     start = time.time()
-    eval_mIOU(model, model_format, args.dataset_path, dataset, class_names, model_input_shape, args.do_crf, args.save_result, args.show_background)
+    eval_mIOU(model, model_format, args.dataset_path, dataset, class_names, model_input_shape, args.do_crf, args.save_result)
     end = time.time()
     print("Evaluation time cost: {:.6f}s".format(end - start))
 

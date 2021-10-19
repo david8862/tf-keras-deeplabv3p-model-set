@@ -45,7 +45,7 @@ class EvalCallBack(Callback):
     def on_epoch_end(self, epoch, logs=None):
         if (epoch+1) % self.eval_epoch_interval == 0:
             # Do eval every eval_epoch_interval epochs
-            mIOU = eval_mIOU(self.model, 'H5', self.dataset_path, self.dataset, self.class_names, self.model_input_shape, do_crf=False, save_result=False, show_background=True)
+            mIOU = eval_mIOU(self.model, 'H5', self.dataset_path, self.dataset, self.class_names, self.model_input_shape, do_crf=False, save_result=False)
 
             if self.save_eval_checkpoint and mIOU > self.best_mIOU:
                 # Save best mIOU value and model checkpoint

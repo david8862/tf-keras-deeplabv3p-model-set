@@ -49,14 +49,20 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 # pip install -r requirements.txt
 ```
 
-2. Download Deeplabv3+ PascalVOC pretrained weights. It's provided by [keras-deeplab-v3-plus](https://github.com/bonlime/keras-deeplab-v3-plus) and imported from [original TF checkpoint](https://github.com/tensorflow/models/tree/master/research/deeplab)
+2. Download Deeplabv3+ PascalVOC/Cityscapes pretrained weights. It's provided by [keras-deeplab-v3-plus](https://github.com/bonlime/keras-deeplab-v3-plus) and imported from [original TF checkpoint](https://github.com/tensorflow/models/tree/master/research/deeplab)
 3. Run Deeplab segmentation on your image or video.
 
 ```
 # wget -O weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5
+# wget -O weights/deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels.h5
+# wget -O weights/deeplabv3_xception_tf_dim_ordering_tf_kernels_cityscapes.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.2/deeplabv3_xception_tf_dim_ordering_tf_kernels_cityscapes.h5
+# wget -O weights/deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels_cityscapes.h5 https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.2/deeplabv3_mobilenetv2_tf_dim_ordering_tf_kernels_cityscapes.h5
+
 # python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --image
 # python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5 --classes_path=configs/voc_classes.txt --output_stride=16 --input=<your video file>
+# python deeplab.py --model_type=xception --weights_path=weights/deeplabv3_xception_tf_dim_ordering_tf_kernels_cityscapes.h5 --classes_path=configs/cityscapes_classes.txt --output_stride=16 --image
 
+# ...
 ```
 
 Image segment sample:

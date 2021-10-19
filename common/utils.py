@@ -339,5 +339,5 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
     # convert plt to numpy image
     img = figure_to_image(figure)
     plt.close("all")
-    return img
+    return np.array(img)
 

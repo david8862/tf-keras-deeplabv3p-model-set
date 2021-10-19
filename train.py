@@ -30,10 +30,9 @@ optimize_tf_gpu(tf, K)
 
 def main(args):
     log_dir = 'logs/000/'
-    # get class info, add background class to match model & GT
+    # get class info
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
     num_classes = len(class_names)
 
     if args.mixed_precision:

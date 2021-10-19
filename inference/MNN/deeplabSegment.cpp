@@ -258,9 +258,8 @@ void RunInference(Settings* s) {
     // just release model data to save memory
     net->releaseModel();
 
-    // get classes labels and add background label
+    // get classes labels
     std::vector<std::string> classes;
-    classes.emplace_back("background");
     std::ifstream classesOs(s->classes_file_name.c_str());
     std::string line;
     while (std::getline(classesOs, line)) {

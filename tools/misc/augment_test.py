@@ -29,7 +29,6 @@ def main():
 
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
     num_classes = len(class_names)
 
     height, width = args.model_input_shape.split('x')

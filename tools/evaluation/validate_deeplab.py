@@ -330,8 +330,8 @@ def handle_prediction(prediction, image, origin_image, num_classes, class_names,
     # calculate mIOU if having label image
     if label_file:
         label = np.array(Image.open(label_file), dtype='int32')
-        # treat all the invalid label value as background
-        label[label>(num_classes-1)] = 0
+        # treat all the invalid label value as 255
+        label[label>(num_classes-1)] = 255
         title_str = 'Predict Segmentation\nmIOU: '+str(mIOU(label, prediction))
         gt_title_str = 'GT Segmentation'
 
@@ -356,10 +356,9 @@ def main():
 
     class_names = None
     if args.classes_path:
-        # add background class to match model & GT
+        # get class names
         class_names = get_classes(args.classes_path)
         assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-        class_names = ['background'] + class_names
 
     # param parse
     height, width = args.model_input_shape.split('x')

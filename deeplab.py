@@ -14,7 +14,7 @@ from timeit import default_timer as timer
 import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Model, load_model
-from tensorflow.keras.utils import multi_gpu_model
+#from tensorflow.keras.utils import multi_gpu_model
 #from tensorflow_model_optimization.sparsity import keras as sparsity
 
 from deeplabv3p.model import get_deeplabv3p_model
@@ -36,7 +36,7 @@ default_config = {
         "weights_path": os.path.join('weights', 'mobilenetv2_original.h5'),
         "do_crf": False,
         "pruning_model": False,
-        "gpu_num" : 1,
+        #"gpu_num" : 1,
     }
 
 
@@ -63,8 +63,6 @@ class DeepLab(object):
         weights_path = os.path.expanduser(self.weights_path)
         assert weights_path.endswith('.h5'), 'Keras model or weights must be a .h5 file.'
 
-        #add one more class for background
-        self.class_names = ['background'] + self.class_names
         num_classes = len(self.class_names)
         assert len(self.class_names) < 254, 'PNG image label only support less than 254 classes.'
 
@@ -74,8 +72,8 @@ class DeepLab(object):
             deeplab_model.summary()
         except Exception as e:
             print(repr(e))
-        if self.gpu_num>=2:
-            deeplab_model = multi_gpu_model(deeplab_model, gpus=self.gpu_num)
+        #if self.gpu_num>=2:
+            #deeplab_model = multi_gpu_model(deeplab_model, gpus=self.gpu_num)
 
         return deeplab_model
 
@@ -229,10 +227,10 @@ if __name__ == '__main__':
         #'--pruning_model', default=False, action="store_true",
         #help='Whether to be a pruning model/weights file')
 
-    parser.add_argument(
-        '--gpu_num', type=int,
-        help='Number of GPU to use, default ' + str(DeepLab.get_defaults("gpu_num"))
-    )
+    #parser.add_argument(
+        #'--gpu_num', type=int,
+        #help='Number of GPU to use, default ' + str(DeepLab.get_defaults("gpu_num"))
+    #)
     parser.add_argument(
         '--image', default=False, action="store_true",
         help='Image inference mode, will ignore all positional arguments'

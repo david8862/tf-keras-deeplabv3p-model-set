@@ -300,10 +300,9 @@ def main():
 
     args = parser.parse_args()
 
-    # prepare class name list, add background class
+    # prepare class name list
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
 
     # dataset list
     if args.set == 'all':

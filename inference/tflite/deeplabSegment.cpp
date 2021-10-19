@@ -211,9 +211,8 @@ void RunInference(Settings* s) {
     LOG(FATAL) << "Failed to allocate tensors!";
   }
 
-  // get classes labels and add background label
+  // get classes labels
   std::vector<std::string> classes;
-  classes.emplace_back("background");
   std::ifstream classesOs(s->classes_file_name.c_str());
   std::string line;
   while (std::getline(classesOs, line)) {

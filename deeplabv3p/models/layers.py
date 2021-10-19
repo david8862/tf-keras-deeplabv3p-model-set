@@ -50,8 +50,14 @@ def img_resize(x, size, mode='bilinear'):
         return tf.image.resize(x, size=size, method='bilinear')
     elif mode == 'nearest':
         return tf.image.resize(x, size=size, method='nearest')
+    elif mode == 'bicubic':
+        return tf.image.resize(x, size=size, method='bicubic')
+    elif mode == 'area':
+        return tf.image.resize(x, size=size, method='area')
+    elif mode == 'gaussian':
+        return tf.image.resize(x, size=size, method='gaussian')
     else:
-        raise ValueError('output model file is not specified')
+        raise ValueError('invalid resize type {}'.format(mode))
 
 
 def CustomBatchNormalization(*args, **kwargs):

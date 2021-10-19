@@ -1,9 +1,21 @@
+ego vehicle
+rectification border
+out of roi
+static
+dynamic
+ground
 road
 sidewalk
+parking
+rail track
 building
 wall
 fence
+guard rail
+bridge
+tunnel
 pole
+polegroup
 traffic light
 traffic sign
 vegetation
@@ -14,6 +26,8 @@ rider
 car
 truck
 bus
+caravan
+trailer
 train
 motorcycle
 bicycle

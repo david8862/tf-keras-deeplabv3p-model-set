@@ -58,10 +58,9 @@ def main():
     parser.add_argument('--dataset_file', required=False, type=str, default=None, help='dataset txt file')
 
     args = parser.parse_args()
-    # prepare class name list, add background class
+    # prepare class name list
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
 
     label_stat(args.label_path, args.dataset_file, class_names)
 

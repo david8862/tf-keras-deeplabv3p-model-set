@@ -64,7 +64,7 @@ def get_deeplabv3p_model(model_type, num_classes, model_input_shape, output_stri
         x = Subpixel(num_classes, 1, scale, padding='same')(base_model.output)
     else:
         x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='conv_upsample')(base_model.output)
-        x = Lambda(img_resize, arguments={'size': (model_input_shape[0], model_input_shape[1])}, name='pred_resize')(x)
+        x = Lambda(img_resize, arguments={'size': (model_input_shape[0], model_input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
 
     # for training model, we need to flatten mask to calculate loss
     if training:
