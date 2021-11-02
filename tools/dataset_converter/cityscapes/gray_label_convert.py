@@ -97,7 +97,7 @@ def cityscapes_train_label(label_array):
 
     label = label_array.copy()
     for i, train_label in enumerate(train_labels):
-        label[label == i] = train_label
+        label[label_array == i] = train_label
 
     # use 254 as invalid label to avoid labelme PNG
     # save error

@@ -6,7 +6,7 @@ wget -O ADEChallengeData2016.zip http://data.csail.mit.edu/places/ADEchallenge/A
 
 # extract data
 echo "Extracting dataset..."
-unzip -e ADEChallengeData2016.zip
+unzip -eq ADEChallengeData2016.zip
 
 
 # convert ADE20K annotation

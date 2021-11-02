@@ -68,9 +68,9 @@ def main(args):
 
 
     # get train&val dataset
-    dataset = get_data_list(args.dataset_file)
+    dataset = get_data_list(args.dataset_file, shuffle=True)
     if args.val_dataset_file:
-        val_dataset = get_data_list(args.val_dataset_file)
+        val_dataset = get_data_list(args.val_dataset_file, shuffle=True)
         num_train = len(dataset)
         num_val = len(val_dataset)
         dataset.extend(val_dataset)

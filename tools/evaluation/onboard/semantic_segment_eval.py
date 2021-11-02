@@ -21,6 +21,7 @@ from common.utils import get_data_list, get_classes
 def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        cm[np.isnan(cm)] = 0
     trained_classes = classes
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -40,6 +41,9 @@ def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion m
     os.makedirs('result', exist_ok=True)
     plt.savefig(output_path)
     #plt.show()
+
+    # close the plot
+    plt.close()
     return
 
 
@@ -171,7 +175,7 @@ def generate_matrix(gt_mask, pre_mask, num_classes):
     return confusion_matrix
 
 
-def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output_shape, show_background):
+def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output_shape):
     num_classes = len(class_names)
 
     # confusion matrix for all classes
@@ -220,20 +224,24 @@ def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output
 
     # calculate Class accuracy
     ClassAcc = np.diag(confusion_matrix) / confusion_matrix.sum(axis=1)
+    ClassAcc[np.isnan(ClassAcc)] = 0
     mClassAcc = np.nanmean(ClassAcc)
 
     # calculate mIoU
     I = np.diag(confusion_matrix)
     U = np.sum(confusion_matrix, axis=0) + np.sum(confusion_matrix, axis=1) - I
     IoU = I/U
+    IoU[np.isnan(IoU)] = 0
     mIoU = np.nanmean(IoU)
 
     # calculate FW (Frequency Weighted) IoU
     Freq = np.sum(confusion_matrix, axis=1) / np.sum(confusion_matrix)
+    Freq[np.isnan(Freq)] = 0
     FWIoU = (Freq[Freq > 0] * IoU[Freq > 0]).sum()
 
     # calculate Dice Coefficient
     DiceCoef = 2*I / (U+I)
+    DiceCoef[np.isnan(DiceCoef)] = 0
 
     # collect IOU/ClassAcc/Dice/Freq for every class
     IOUs, CLASS_ACCs, DICEs, FREQs = {}, {}, {}, {}
@@ -242,17 +250,6 @@ def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output
         CLASS_ACCs[class_name] = class_acc
         DICEs[class_name] = dice
         FREQs[class_name] = freq
-
-    if not show_background:
-        #get ride of background class info
-        display_class_names = copy.deepcopy(class_names)
-        display_class_names.remove('background')
-        display_confusion_matrix = copy.deepcopy(confusion_matrix[1:, 1:])
-        IOUs.pop('background')
-        num_classes = num_classes - 1
-    else:
-        display_class_names = class_names
-        display_confusion_matrix = confusion_matrix
 
     #sort IoU result by value, in descending order
     IOUs = OrderedDict(sorted(IOUs.items(), key=operator.itemgetter(1), reverse=True))
@@ -271,7 +268,7 @@ def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output
 
     # Plot mIOU & confusion matrix
     plot_mIOU_result(IOUs, mIoU, num_classes)
-    plot_confusion_matrix(display_confusion_matrix, display_class_names, mIoU, normalize=True)
+    plot_confusion_matrix(confusion_matrix, class_names, mIoU, normalize=True)
 
     return mIoU
 
@@ -302,26 +299,21 @@ def main():
         '--model_output_shape', type=str,
         help='model mask output size as <height>x<width>, default=%(default)s', default='512x512')
 
-    parser.add_argument(
-        '--show_background', default=False, action="store_true",
-        help='Show background evaluation info')
-
     args = parser.parse_args()
 
     # param parse
     height, width = args.model_output_shape.split('x')
     model_output_shape = (int(height), int(width))
 
-    # add background class
+    # get class names
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
 
     # get dataset list
     dataset = get_data_list(args.dataset_file)
 
     start = time.time()
-    eval_mIOU(dataset, args.gt_label_path, args.pred_label_path, class_names, model_output_shape, args.show_background)
+    eval_mIOU(dataset, args.gt_label_path, args.pred_label_path, class_names, model_output_shape)
     end = time.time()
     print("Evaluation time cost: {:.6f}s".format(end - start))
 

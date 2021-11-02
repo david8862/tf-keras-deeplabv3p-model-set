@@ -11,7 +11,7 @@ from common.utils import get_classes, get_data_list, visualize_segmentation
 
 
 def dataset_visualize(dataset_path, dataset_file, classes_path):
-    dataset_list = get_data_list(dataset_file)
+    dataset_list = get_data_list(dataset_file, shuffle=False)
 
     class_names = get_classes(classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'

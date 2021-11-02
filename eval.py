@@ -156,6 +156,7 @@ def deeplab_predict_mnn(interpreter, session, image_data):
 def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        cm[np.isnan(cm)] = 0
     trained_classes = classes
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -175,6 +176,9 @@ def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion m
     os.makedirs('result', exist_ok=True)
     plt.savefig(output_path)
     #plt.show()
+
+    # close the plot
+    plt.close()
     return
 
 
@@ -408,20 +412,24 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
 
     # calculate Class accuracy
     ClassAcc = np.diag(confusion_matrix) / confusion_matrix.sum(axis=1)
+    ClassAcc[np.isnan(ClassAcc)] = 0
     mClassAcc = np.nanmean(ClassAcc)
 
     # calculate mIoU
     I = np.diag(confusion_matrix)
     U = np.sum(confusion_matrix, axis=0) + np.sum(confusion_matrix, axis=1) - I
     IoU = I/U
+    IoU[np.isnan(IoU)] = 0
     #mIoU = np.nanmean(IoU)
 
     # calculate FW (Frequency Weighted) IoU
     Freq = np.sum(confusion_matrix, axis=1) / np.sum(confusion_matrix)
+    Freq[np.isnan(Freq)] = 0
     FWIoU = (Freq[Freq > 0] * IoU[Freq > 0]).sum()
 
     # calculate Dice Coefficient
     DiceCoef = 2*I / (U+I)
+    DiceCoef[np.isnan(DiceCoef)] = 0
 
     # collect IOU/ClassAcc/Dice/Freq for every class
     IOUs, CLASS_ACCs, DICEs, FREQs = {}, {}, {}, {}
@@ -430,9 +438,6 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
         CLASS_ACCs[class_name] = class_acc
         DICEs[class_name] = dice
         FREQs[class_name] = freq
-
-    #display_class_names = class_names
-    #display_confusion_matrix = confusion_matrix
 
     #sort IoU result by value, in descending order
     IOUs = OrderedDict(sorted(IOUs.items(), key=operator.itemgetter(1), reverse=True))
@@ -448,7 +453,6 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
     print('FWIoU=%.3f' % (FWIoU*100))
     print('PixelAcc=%.3f' % (PixelAcc*100))
     print('mClassAcc=%.3f' % (mClassAcc*100))
-
 
     # Plot mIOU & confusion matrix
     plot_mIOU_result(IOUs, mIoU, num_classes)

@@ -1,0 +1,12 @@
+void
+sky
+building
+column_pole
+road
+sidewalk
+tree
+sign
+fence
+car
+pedestrian
+bicyclist

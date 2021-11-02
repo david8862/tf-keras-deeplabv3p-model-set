@@ -19,3 +19,4 @@ onnx
 onnxruntime
 pydensecrf
 labelme
+pandas
