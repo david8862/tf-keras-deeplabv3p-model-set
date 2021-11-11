@@ -57,7 +57,8 @@ class SegmentationGenerator(Sequence):
 
             # Load image and label array
             #image = cv2.imread(image_path, cv2.IMREAD_COLOR) # cv2.IMREAD_COLOR/cv2.IMREAD_GRAYSCALE/cv2.IMREAD_UNCHANGED
-            img = Image.open(image_path)
+            #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            img = Image.open(image_path).convert('RGB')
             lbl = Image.open(label_path)
             image = np.array(img)
             label = np.array(lbl)

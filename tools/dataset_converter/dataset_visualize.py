@@ -27,7 +27,7 @@ def dataset_visualize(dataset_path, dataset_file, classes_path):
         pbar.update(1)
 
         # Load image and label array
-        img = Image.open(image_path)
+        img = Image.open(image_path).convert('RGB')
         lbl = Image.open(label_path)
         image = np.array(img)
         label = np.array(lbl)
@@ -39,18 +39,19 @@ def dataset_visualize(dataset_path, dataset_file, classes_path):
 
         # render segmentation mask on image
         image = visualize_segmentation(image, label, class_names=class_names, overlay=0.5, ignore_count_threshold=1)
-        # convert to BGR for display
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         # show image file info
         image_file_name = os.path.basename(image_path)
         cv2.putText(image, image_file_name+'({}/{})'.format(i+1, len(image_path_list)),
-                    (3,15),
+                    (3, 15),
                     cv2.FONT_HERSHEY_PLAIN,
                     fontScale=1,
-                    color=(0, 0, 255),
+                    color=(255, 0, 0),
                     thickness=1,
                     lineType=cv2.LINE_AA)
+
+        # convert to BGR for display
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         cv2.namedWindow("Image", 0)
         cv2.imshow("Image", image)

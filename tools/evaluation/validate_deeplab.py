@@ -34,7 +34,7 @@ def validate_deeplab_model(model_path, image_file, class_names, model_input_shap
         assert num_classes == len(class_names), 'classes number mismatch with model.'
 
     # prepare input image
-    img = Image.open(image_file)
+    img = Image.open(image_file).convert('RGB')
     image_data = preprocess_image(img, model_input_shape)
     image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
@@ -84,7 +84,7 @@ def validate_deeplab_model_onnx(model_path, image_file, class_names, do_crf, lab
         assert num_classes == len(class_names), 'classes number mismatch with model.'
 
     # prepare input image
-    img = Image.open(image_file)
+    img = Image.open(image_file).convert('RGB')
     image_data = preprocess_image(img, model_input_shape)
     image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
@@ -128,7 +128,7 @@ def validate_deeplab_model_mnn(model_path, image_file, class_names, do_crf, labe
     model_input_shape = (height, width)
 
     # prepare input image
-    img = Image.open(image_file)
+    img = Image.open(image_file).convert('RGB')
     image_data = preprocess_image(img, model_input_shape)
     image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
@@ -243,7 +243,7 @@ def validate_deeplab_model_pb(model_path, image_file, class_names, do_crf, label
         assert num_classes == len(class_names), 'classes number mismatch with model.'
 
     # prepare input image
-    img = Image.open(image_file)
+    img = Image.open(image_file).convert('RGB')
     image_data = preprocess_image(img, model_input_shape)
     image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
@@ -290,7 +290,7 @@ def validate_deeplab_model_tflite(model_path, image_file, class_names, do_crf, l
         assert num_classes == len(class_names), 'classes number mismatch with model.'
 
     # prepare input image
-    img = Image.open(image_file)
+    img = Image.open(image_file).convert('RGB')
     image_data = preprocess_image(img, model_input_shape)
     image = denormalize_image(image_data[0])
     #origin image shape, in (width, height) format
