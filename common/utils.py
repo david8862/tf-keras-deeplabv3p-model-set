@@ -292,9 +292,11 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
         plt.title(title)
 
     if gt_mask is not None:
-        # reset invalid label value as 0(background)
         filtered_gt_mask = copy.deepcopy(gt_mask)
-        filtered_gt_mask[filtered_gt_mask>len(class_names)-1] = 0
+        if class_names:
+            # reset invalid label value as 0(background)
+            filtered_gt_mask[filtered_gt_mask>len(class_names)-1] = 0
+
         # convert gt mask array to color mapped image
         gt_mask_image = label_to_color_image(filtered_gt_mask).astype(np.uint8)
         # show gt segmentation image
