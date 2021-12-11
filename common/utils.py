@@ -280,8 +280,13 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
 
     figure = plt.figure(figsize=figsize)
 
+    display_mask = copy.deepcopy(mask)
+    if class_names:
+        # reset all invalid labels as a new value (invalid) for display
+        display_mask[display_mask>len(class_names)-1] = len(class_names)
+
     # convert mask array to color mapped image
-    mask_image = label_to_color_image(mask).astype(np.uint8)
+    mask_image = label_to_color_image(display_mask).astype(np.uint8)
     # show segmentation result image
     plt.subplot(grid_spec[0])
     plt.imshow(image)
@@ -292,13 +297,13 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
         plt.title(title)
 
     if gt_mask is not None:
-        filtered_gt_mask = copy.deepcopy(gt_mask)
+        display_gt_mask = copy.deepcopy(gt_mask)
         if class_names:
-            # reset invalid label value as 0(background)
-            filtered_gt_mask[filtered_gt_mask>len(class_names)-1] = 0
+            # reset all invalid labels as a new value (invalid) for display
+            display_gt_mask[display_gt_mask>len(class_names)-1] = len(class_names)
 
         # convert gt mask array to color mapped image
-        gt_mask_image = label_to_color_image(filtered_gt_mask).astype(np.uint8)
+        gt_mask_image = label_to_color_image(display_gt_mask).astype(np.uint8)
         # show gt segmentation image
         plt.subplot(grid_spec[1])
         plt.imshow(image)
@@ -311,15 +316,18 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
     # if class name list is provided, plot a legend graph of
     # classes color map
     if class_names:
-        classes_index = np.arange(len(class_names)).reshape(len(class_names), 1)
+        # add "invalid" label for display
+        display_class_names = class_names + ['invalid']
+        classes_index = np.arange(len(display_class_names)).reshape(len(display_class_names), 1)
+
         classes_color_map = label_to_color_image(classes_index)
 
-        labels, count= np.unique(mask, return_counts=True)
+        labels, count= np.unique(display_mask, return_counts=True)
         # filter some corner pixel labels, may be caused by mask resize
         labels = np.array([labels[i] for i in range(len(labels)) if count[i] > ignore_count_threshold])
 
         if gt_mask is not None:
-            gt_labels, gt_count= np.unique(filtered_gt_mask, return_counts=True)
+            gt_labels, gt_count= np.unique(display_gt_mask, return_counts=True)
             # filter some corner pixel labels, may be caused by mask resize
             gt_labels = np.array([gt_labels[i] for i in range(len(gt_labels)) if gt_count[i] > ignore_count_threshold])
 
@@ -333,7 +341,7 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
 
         # adjust subplot display
         ax.yaxis.tick_right()
-        plt.yticks(range(len(labels)), np.asarray(class_names)[labels])
+        plt.yticks(range(len(labels)), np.asarray(display_class_names)[labels])
         plt.xticks([], [])
         ax.tick_params(width=0.0)
         plt.grid('off')

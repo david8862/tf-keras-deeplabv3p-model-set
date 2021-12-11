@@ -18,6 +18,7 @@ class SegmentationGenerator(Sequence):
                  input_shape=(512, 512),
                  weighted_type=None,
                  is_eval=False,
+                 ignore_index=255,
                  augment=True):
         # get real path for dataset
         dataset_realpath = os.path.realpath(dataset_path)
@@ -32,6 +33,7 @@ class SegmentationGenerator(Sequence):
         self.weighted_type = weighted_type
         self.augment = augment
         self.is_eval = is_eval
+        self.ignore_index = ignore_index
 
         # Preallocate memory for batch input/output data
         self.batch_images = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype='float32')
@@ -64,13 +66,6 @@ class SegmentationGenerator(Sequence):
             label = np.array(lbl)
             img.close()
             lbl.close()
-
-            # we reset all the invalid label value as 0(background) in training,
-            # but as 255(invalid) in eval
-            if self.is_eval:
-                label[label>(self.num_classes-1)] = 255
-            else:
-                label[label>(self.num_classes-1)] = 0
 
             # Do augmentation
             if self.augment:
@@ -121,12 +116,8 @@ class SegmentationGenerator(Sequence):
             label = label.astype('int32')
             label = label.flatten()
 
-            # we reset all the invalid label value as 0(background) in training,
-            # but as 255(invalid) in eval
-            if self.is_eval:
-                label[label > (self.num_classes-1)] = 255
-            else:
-                label[label > (self.num_classes-1)] = 0
+            # reset all the invalid label value as ignore_index
+            label[label>(self.num_classes-1)] = self.ignore_index
 
             # append input image and label array
             self.batch_images[n] = image

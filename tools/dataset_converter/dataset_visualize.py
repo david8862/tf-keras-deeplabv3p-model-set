@@ -34,8 +34,8 @@ def dataset_visualize(dataset_path, dataset_file, classes_path):
         img.close()
         lbl.close()
 
-        # reset all the invalid label value as 0(background)
-        label[label>(num_classes-1)] = 0
+        # reset all the invalid label value as 255
+        #label[label>(num_classes-1)] = 255
 
         # render segmentation mask on image
         image = visualize_segmentation(image, label, class_names=class_names, overlay=0.5, ignore_count_threshold=1)

@@ -29,11 +29,12 @@ def label_stat(label_path, dataset_file, class_names):
     pbar = tqdm(total=len(png_files), desc='Labels checking')
     for png_file in png_files:
         label_array = np.array(Image.open(png_file))
-        # treat all the invalid label value as background
-        label_array[label_array>(num_classes-1)] = 0
+        # treat all the invalid label value as 255
+        label_array[label_array>(num_classes-1)] = 255
 
-        # count object class for statistic
+        # count object class for statistic (not include invalid)
         label_list = list(np.unique(label_array))
+        label_list.remove(255)
         if sum(label_list) > 0:
             valid_number += 1
         for label in label_list:

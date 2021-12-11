@@ -13,7 +13,7 @@ from deeplabv3p.model import get_deeplabv3p_model
 from unet.model import get_unet_model
 from fast_scnn.model import get_fast_scnn_model
 from deeplabv3p.data import SegmentationGenerator
-from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy
+from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy, SparseCategoricalCrossEntropy
 from deeplabv3p.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
 from common.utils import get_classes, get_data_list, optimize_tf_gpu, calculate_weigths_labels, load_class_weights
 from common.model_utils import get_optimizer
@@ -86,6 +86,7 @@ def main(args):
                                             input_shape=args.model_input_shape,
                                             weighted_type=args.weighted_type,
                                             is_eval=False,
+                                            ignore_index=args.ignore_index,
                                             augment=True)
 
     valid_generator = SegmentationGenerator(args.dataset_path, dataset[num_train:],
@@ -94,6 +95,7 @@ def main(args):
                                             input_shape=args.model_input_shape,
                                             weighted_type=args.weighted_type,
                                             is_eval=False,
+                                            ignore_index=args.ignore_index,
                                             augment=False)
 
     # prepare online evaluation callback
@@ -114,10 +116,12 @@ def main(args):
         losses = WeightedSparseCategoricalCrossEntropy(weights)
         sample_weight_mode = None
     elif args.weighted_type == 'adaptive':
-        losses = sparse_crossentropy
+        #losses = sparse_crossentropy
+        losses = SparseCategoricalCrossEntropy(ignore_index=args.ignore_index)
         sample_weight_mode = 'temporal'
     elif args.weighted_type == None:
-        losses = sparse_crossentropy
+        #losses = sparse_crossentropy
+        losses = SparseCategoricalCrossEntropy(ignore_index=args.ignore_index)
         sample_weight_mode = None
     else:
         raise ValueError('invalid weighted_type {}'.format(args.weighted_type))
@@ -267,6 +271,8 @@ if __name__ == "__main__":
         help = "validation data persentage in dataset if no val dataset provide, default=%(default)s")
     parser.add_argument('--classes_path', type=str, required=False, default='configs/voc_classes.txt',
         help='path to class definitions, default=%(default)s')
+    parser.add_argument("--ignore_index", type=int, required=False, default=255,
+        help='label value that is ignored and does not contribute to loss, default=%(default)s')
 
     # Training options
     parser.add_argument("--batch_size", type=int, required=False, default=16,

@@ -157,6 +157,7 @@ Image segment sample:
 
             You can put these dataset files together at `<dataset_path>` to create an independent dataset directory
 
+    After dataset is ready, you can manually review it with [dataset_visualize.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/tools/dataset_converter/dataset_visualize.py)
 
 2. [train.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/train.py)
 ```
@@ -166,8 +167,9 @@ usage: train.py [-h] [--model_type MODEL_TYPE] [--weights_path WEIGHTS_PATH]
                 [--output_stride {8,16,32}] [--dataset_path DATASET_PATH]
                 [--dataset_file DATASET_FILE]
                 [--val_dataset_file VAL_DATASET_FILE] [--val_split VAL_SPLIT]
-                [--classes_path CLASSES_PATH] [--batch_size BATCH_SIZE]
-                [--optimizer {adam,rmsprop,sgd}] [--loss {crossentropy,focal}]
+                [--classes_path CLASSES_PATH] [--ignore_index IGNORE_INDEX]
+                [--batch_size BATCH_SIZE] [--optimizer {adam,rmsprop,sgd}]
+                [--loss {crossentropy,focal}]
                 [--weighted_type {None,adaptive,balanced}]
                 [--learning_rate LEARNING_RATE]
                 [--average_type {None,ema,swa,lookahead}]
@@ -206,6 +208,9 @@ optional arguments:
   --classes_path CLASSES_PATH
                         path to class definitions,
                         default=configs/voc_classes.txt
+  --ignore_index IGNORE_INDEX
+                        label value that is ignored and does not contribute to
+                        loss, default=255
   --batch_size BATCH_SIZE
                         batch size for training, default=16
   --optimizer {adam,rmsprop,sgd}
