@@ -13,7 +13,7 @@ from deeplabv3p.model import get_deeplabv3p_model
 from unet.model import get_unet_model
 from fast_scnn.model import get_fast_scnn_model
 from deeplabv3p.data import SegmentationGenerator
-from deeplabv3p.loss import sparse_crossentropy, softmax_focal_loss, WeightedSparseCategoricalCrossEntropy, SparseCategoricalCrossEntropy
+from deeplabv3p.loss import sparse_crossentropy, sparse_softmax_focal_loss, SparseSoftmaxFocalLoss, SparseCategoricalCrossEntropy, WeightedSparseCategoricalCrossEntropy
 from deeplabv3p.metrics import Jaccard#, sparse_accuracy_ignoring_last_label
 from common.utils import get_classes, get_data_list, optimize_tf_gpu, calculate_weigths_labels, load_class_weights
 from common.model_utils import get_optimizer
@@ -113,7 +113,7 @@ def main(args):
             weights = load_class_weights(classes_weights_path)
         else:
             weights = calculate_weigths_labels(train_generator, num_classes, save_path=args.dataset_path)
-        losses = WeightedSparseCategoricalCrossEntropy(weights)
+        losses = WeightedSparseCategoricalCrossEntropy(weights, ignore_index=args.ignore_index)
         sample_weight_mode = None
     elif args.weighted_type == 'adaptive':
         #losses = sparse_crossentropy
@@ -128,7 +128,8 @@ def main(args):
 
     if args.loss == 'focal':
         warnings.warn("Focal loss doesn't support weighted class balance, will ignore related config")
-        losses = softmax_focal_loss
+        #losses = sparse_softmax_focal_loss
+        losses = SparseSoftmaxFocalLoss(ignore_index=args.ignore_index)
         sample_weight_mode = None
     elif args.loss == 'crossentropy':
         # using crossentropy will keep the weigted type setting
