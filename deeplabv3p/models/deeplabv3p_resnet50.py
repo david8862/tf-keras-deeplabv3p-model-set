@@ -372,7 +372,7 @@ def Deeplabv3pResNet50(input_shape=(512, 512, 3),
 
     # Final prediction conv block
     x = DeeplabConv2D(num_classes, (1, 1), padding='same', name='logits_semantic')(x)
-    x = Lambda(img_resize, arguments={'size': (input_shape[0],input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
+    x = Lambda(img_resize, arguments={'size': (input_shape[0], input_shape[1]), 'mode': 'bilinear'}, name='pred_resize')(x)
     x = Reshape((input_shape[0]*input_shape[1], num_classes)) (x)
     x = Softmax(name='Predictions/Softmax')(x)
 
