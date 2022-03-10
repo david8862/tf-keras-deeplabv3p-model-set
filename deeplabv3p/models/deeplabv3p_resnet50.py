@@ -8,7 +8,7 @@
 - [Deep Residual Learning for Image Recognition](
     https://arxiv.org/abs/1512.03385) (CVPR 2016 Best Paper Award)
 """
-import os
+import os, sys
 import warnings
 from keras_applications.imagenet_utils import _obtain_input_shape
 from tensorflow.keras.models import Model
@@ -17,6 +17,7 @@ from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lamb
 from tensorflow.keras.utils import get_source_inputs, get_file
 from tensorflow.keras import backend as K
 
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
 
 
@@ -333,7 +334,7 @@ def Deeplabv3pResNet50(input_shape=(512, 512, 3),
                           input_tensor=None,
                           num_classes=21,
                           OS=8):
-    """ Instantiates the Deeplabv3+ MobileNetV3Large architecture
+    """ Instantiates the Deeplabv3+ ResNet50 architecture
     # Arguments
         input_shape: shape of input image. format HxWxC
             PASCAL VOC model was trained on (512,512,3) images
@@ -387,22 +388,12 @@ def Deeplabv3pResNet50(input_shape=(512, 512, 3),
     return model, backbone_len
 
 
-
-
 if __name__ == '__main__':
-    input_tensor = Input(shape=(224, 224, 3), name='image_input')
-    #model = ResNet50(include_top=False, input_shape=(512, 512, 3), weights='imagenet')
-    model = ResNet50(include_top=True, input_tensor=input_tensor, weights='imagenet')
+    input_tensor = Input(shape=(512, 512, 3), name='image_input')
+    model, backbone_len = Deeplabv3pResNet50(input_tensor=input_tensor,
+                                      weights=None,
+                                      num_classes=21,
+                                      OS=8)
     model.summary()
+    K.set_learning_phase(0)
 
-    import numpy as np
-    from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
-    from keras_preprocessing import image
-
-    img = image.load_img('../../examples/dog.jpg', target_size=(224, 224))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-
-    preds = model.predict(x)
-    print('Predicted:', decode_predictions(preds))

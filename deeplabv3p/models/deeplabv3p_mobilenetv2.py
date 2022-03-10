@@ -8,12 +8,15 @@
 - [Inverted Residuals and Linear Bottlenecks: Mobile Networks for
     Classification, Detection and Segmentation](https://arxiv.org/abs/1801.04381)
 """
+import os, sys
+
 from tensorflow.keras.models import Model
 from tensorflow.keras.activations import relu
 from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lambda, AveragePooling2D, Input, Concatenate, Add, Reshape, BatchNormalization, Dropout, ReLU, Softmax
 from tensorflow.keras.utils import get_source_inputs, get_file
-#from tensorflow.keras import backend as K
+from tensorflow.keras import backend as K
 
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, ASPP_block, ASPP_Lite_block, Decoder_block, normalize, img_resize
 
 BACKBONE_WEIGHT_PATH = ('https://github.com/JonathanCMitchell/mobilenet_v2_keras/'
@@ -347,3 +350,13 @@ def Deeplabv3pLiteMobileNetV2(input_shape=(512, 512, 3),
         model.load_weights(weights_path, by_name=True)
     return model, backbone_len
 
+
+if __name__ == '__main__':
+    input_tensor = Input(shape=(512, 512, 3), name='image_input')
+    model, backbone_len = Deeplabv3pMobileNetV2(input_tensor=input_tensor,
+                                      alpha=1.0,
+                                      weights=None,
+                                      num_classes=21,
+                                      OS=8)
+    model.summary()
+    K.set_learning_phase(0)

@@ -87,17 +87,6 @@ def preprocess_input(x):
             ImageNet dataset.
     """
     x = _preprocess_input(x, mode='tf', backend=K)
-    #x /= 255.
-    #mean = [0.485, 0.456, 0.406]
-    #std = [0.229, 0.224, 0.225]
-
-    #x[..., 0] -= mean[0]
-    #x[..., 1] -= mean[1]
-    #x[..., 2] -= mean[2]
-    #if std is not None:
-        #x[..., 0] /= std[0]
-        #x[..., 1] /= std[1]
-        #x[..., 2] /= std[2]
 
     return x
 
@@ -909,3 +898,4 @@ if __name__ == '__main__':
                                       num_classes=21,
                                       OS=8)
     model.summary()
+    K.set_learning_phase(0)

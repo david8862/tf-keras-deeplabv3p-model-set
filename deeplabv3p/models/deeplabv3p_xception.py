@@ -9,14 +9,14 @@ Reference Paper:
 - [Xception: Deep Learning with Depthwise Separable Convolutions]
     (https://arxiv.org/abs/1610.02357)
 """
-import numpy as np
-import tensorflow as tf
+import os, sys
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Conv2D, DepthwiseConv2D, ZeroPadding2D, Lambda, AveragePooling2D, Input, Concatenate, Add, Reshape, BatchNormalization, Dropout, ReLU, Softmax, add
 from tensorflow.keras.utils import get_source_inputs, get_file
-#from tensorflow.keras import backend as K
+from tensorflow.keras import backend as K
 
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 from deeplabv3p.models.layers import DeeplabConv2D, DeeplabDepthwiseConv2D, CustomBatchNormalization, SepConv_BN, ASPP_block, Decoder_block, normalize, img_resize
 
 WEIGHTS_PATH_X = "https://github.com/bonlime/keras-deeplab-v3-plus/releases/download/1.1/deeplabv3_xception_tf_dim_ordering_tf_kernels.h5"
@@ -237,3 +237,12 @@ def Deeplabv3pXception(input_shape=(512, 512, 3),
         model.load_weights(weights_path, by_name=True)
     return model, backbone_len
 
+
+if __name__ == '__main__':
+    input_tensor = Input(shape=(512, 512, 3), name='image_input')
+    model, backbone_len = Deeplabv3pXception(input_tensor=input_tensor,
+                                      weights='pascalvoc',
+                                      num_classes=21,
+                                      OS=16)
+    model.summary()
+    K.set_learning_phase(0)
