@@ -191,7 +191,7 @@ def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output
         gt_mask = np.array(Image.open(gt_label_filename))
         # reset all the invalid label value as 255
         gt_mask[gt_mask>(num_classes-1)] = 255
-        gt_mask = cv2.resize(gt_mask, model_output_shape, interpolation = cv2.INTER_NEAREST)
+        gt_mask = cv2.resize(gt_mask, model_output_shape[::-1], interpolation = cv2.INTER_NEAREST)
 
         # load model predict label mask
         pred_mask = np.array(Image.open(pred_label_filename))
@@ -275,7 +275,7 @@ def eval_mIOU(dataset, gt_label_path, pred_label_path, class_names, model_output
 
 
 def main():
-    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS, description='evaluate Deeplab model (h5/pb/tflite/mnn) with test dataset')
+    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS, description='evaluate Semantic Segmentation model with test dataset')
     '''
     Command line options
     '''

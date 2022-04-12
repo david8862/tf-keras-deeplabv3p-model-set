@@ -63,14 +63,11 @@ def main():
         # add background class to match model & GT
         class_names = get_classes(args.classes_path)
         assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-        class_names = ['background'] + class_names
     else:
         class_names = None
 
     label_convert(args.input_label_path, args.output_label_path, class_names)
 
 
-
 if __name__ == '__main__':
     main()
-

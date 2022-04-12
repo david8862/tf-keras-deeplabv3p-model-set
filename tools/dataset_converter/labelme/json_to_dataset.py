@@ -17,7 +17,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 
 from common.utils import get_classes
 
 
-def label_convert(json_file_path, png_label_path, class_names):
+def label_convert(json_file_path, png_label_path, class_names, polygon_only):
     if not os.path.isdir(json_file_path):
         raise ValueError('Input path does not exist!\n')
     os.makedirs(png_label_path, exist_ok=True)
@@ -38,18 +38,30 @@ def label_convert(json_file_path, png_label_path, class_names):
         data = json.load(open(json_file))
 
         # get image info
-        imageData = data.get("imageData")
-        if not imageData:
-            imagePath = os.path.join(os.path.dirname(json_file), data["imagePath"].replace('\\', '/'))
-            with open(imagePath, "rb") as f:
-                imageData = f.read()
-                imageData = base64.b64encode(imageData).decode("utf-8")
-        img = utils.img_b64_to_arr(imageData)
+        #imageData = data.get("imageData")
+        #if not imageData:
+            #imagePath = os.path.join(os.path.dirname(json_file), data["imagePath"].replace('\\', '/'))
+            #with open(imagePath, "rb") as f:
+                #imageData = f.read()
+                #imageData = base64.b64encode(imageData).decode("utf-8")
+        #img = utils.img_b64_to_arr(imageData)
+        #img_shape = img.shape
+
+        img_shape = (data["imageHeight"], data["imageWidth"], 3)
+
+        if polygon_only:
+            shapes = [shape for shape in data["shapes"] if shape["shape_type"] == "polygon"]
+        else:
+            shapes = data["shapes"]
+
+        # warning if no valid shapes
+        if len(shapes) == 0:
+            print("Warning! No valid shapes for", json_file)
 
         # convert json labels to numpy label array
         # and save to png
         label_array, _ = utils.shapes_to_label(
-            img.shape, data["shapes"], label_name_to_value
+            img_shape, shapes, label_name_to_value
         )
 
         # count object class for statistic
@@ -58,7 +70,7 @@ def label_convert(json_file_path, png_label_path, class_names):
             class_name = class_names[label]
             class_count[class_name] = class_count[class_name] + 1
 
-        utils.lblsave(os.path.join(png_label_path, os.path.basename(json_file)+".png"), label_array)
+        utils.lblsave(os.path.join(png_label_path, os.path.splitext(os.path.basename(json_file))[0]+".png"), label_array)
         pbar.update(1)
 
     pbar.close()
@@ -71,22 +83,21 @@ def label_convert(json_file_path, png_label_path, class_names):
     print('total number of converted images: ', len(json_files))
 
 
-
 def main():
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS, description='convert labelme json label to voc png label')
 
     parser.add_argument('--json_file_path', required=True, type=str, help='path to labelme annotated json label files')
     parser.add_argument('--classes_path', type=str, required=False, default='../../../configs/voc_classes.txt', help='path to class definitions, default=%(default)s')
     parser.add_argument('--png_label_path', required=True, type=str, help='output path of converted png label images')
+    parser.add_argument('--polygon_only', help="only convert polygon annotations", default=False, action="store_true")
 
     args = parser.parse_args()
 
     # add background class to match model & GT
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
-    class_names = ['background'] + class_names
 
-    label_convert(args.json_file_path, args.png_label_path, class_names)
+    label_convert(args.json_file_path, args.png_label_path, class_names, args.polygon_only)
 
 
 if __name__ == "__main__":
