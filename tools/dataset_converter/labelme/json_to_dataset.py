@@ -93,7 +93,6 @@ def main():
 
     args = parser.parse_args()
 
-    # add background class to match model & GT
     class_names = get_classes(args.classes_path)
     assert len(class_names) < 254, 'PNG image label only support less than 254 classes.'
 
