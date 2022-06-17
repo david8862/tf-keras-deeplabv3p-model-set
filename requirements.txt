@@ -17,6 +17,6 @@ keras2onnx
 tf2onnx
 onnx
 onnxruntime
-pydensecrf
+git+https://github.com/lucasb-eyer/pydensecrf.git
 labelme
 pandas

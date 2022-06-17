@@ -133,7 +133,7 @@ class SegmentationGenerator(Sequence):
             # according to pixel number of classes
             class_list = np.unique(label)
             if len(class_list):
-                class_weights = class_weight.compute_class_weight('balanced', class_list, label)
+                class_weights = class_weight.compute_class_weight(class_weight='balanced', classes=class_list, y=label)
                 class_weights = {class_id : weight for class_id , weight in zip(class_list, class_weights)}
             # class_weigts dict would be like:
             # {
