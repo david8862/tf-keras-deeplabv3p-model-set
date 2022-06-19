@@ -6,6 +6,7 @@ import os
 import numpy as np
 import copy
 from tqdm import tqdm
+import io
 from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -171,7 +172,7 @@ def get_data_list(data_list_file, shuffle=True):
 
 def figure_to_image(figure):
     '''
-    Convert a Matplotlib figure to a Pillow image with RGBA channels
+    Deprecated: convert matplotlib figure to pillow image with RGBA channels
 
     # Arguments
         figure: matplotlib figure
@@ -193,6 +194,27 @@ def figure_to_image(figure):
     image = Image.frombytes("RGBA", (w, h), buf.tostring())
     # Convert RGBA to RGB
     image = np.asarray(image)[..., :3]
+    return image
+
+
+def plt_to_image(plot):
+    '''
+    Convert matplotlib figure plot to pillow image with RGBA channels
+
+    # Arguments
+        figure: matplotlib figure
+                usually create with plt.figure()
+
+    # Returns
+        image: numpy array image
+    '''
+    image_buffer = io.BytesIO()
+    plot.savefig(image_buffer, format='png')
+    image = Image.open(image_buffer)
+
+    # Convert RGBA to RGB
+    image = np.asarray(image)[..., :3]
+
     return image
 
 
@@ -347,7 +369,9 @@ def visualize_segmentation(image, mask, gt_mask=None, class_names=None, overlay=
         plt.grid('off')
 
     # convert plt to numpy image
-    img = figure_to_image(figure)
+    #img = figure_to_image(figure)
+    img = plt_to_image(plt)
+
     plt.close("all")
     return np.array(img)
 
