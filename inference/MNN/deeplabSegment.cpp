@@ -402,6 +402,19 @@ void RunInference(Settings* s) {
     stbi_write_png(s->mask_img_name.c_str(), save_width, save_height, 1, mask_array, 0);
     MNN_PRINT("Segmentation result has been saved to: %s\n", s->mask_img_name.c_str());
 
+    // Release buffer memory
+    if (mask_array) {
+        free(mask_array);
+        mask_array = nullptr;
+    }
+
+    if (resizeImage) {
+        free(resizeImage);
+        resizeImage = nullptr;
+    }
+
+    delete dataTensor;
+
     // Release session and model
     net->releaseSession(session);
     //net->releaseModel();

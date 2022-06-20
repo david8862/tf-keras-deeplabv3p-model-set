@@ -367,6 +367,17 @@ void RunInference(Settings* s) {
   stbi_write_png(s->mask_img_name.c_str(), save_width, save_height, 1, mask_array, 0);
   LOG(INFO) << "Segmentation result has been saved to: " << s->mask_img_name << "\n";
 
+  // Release buffer memory
+  if (mask_array) {
+      free(mask_array);
+      mask_array = nullptr;
+  }
+
+  if (resizeImage) {
+      free(resizeImage);
+      resizeImage = nullptr;
+  }
+
   return;
 }
 
