@@ -84,7 +84,7 @@ void deeplab_postprocess(const TfLiteTensor* mask_tensor, uint8_t* mask_array, s
 
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                //get bbox prediction data offset for each anchor, each feature point
+                //get mask label data offset for each feature point
                 int class_scores_offset, class_scores_step;
                 // Tensorflow format tensor, NHWC
                 class_scores_offset = h * width * channel + w * channel;

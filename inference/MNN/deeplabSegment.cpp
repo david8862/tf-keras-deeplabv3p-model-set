@@ -132,7 +132,7 @@ void deeplab_postprocess(const Tensor* mask_tensor, uint8_t* mask_array, std::ve
 
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                //get bbox prediction data offset for each anchor, each feature point
+                //get mask label data offset for each feature point
                 int class_scores_offset, class_scores_step;
                 if (dimType == Tensor::TENSORFLOW) {
                     // Tensorflow format tensor, NHWC
