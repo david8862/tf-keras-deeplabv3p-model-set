@@ -71,7 +71,17 @@ def validate_deeplab_model_onnx(model, image_file, class_names, do_crf, label_fi
     # assume only 1 output tensor
     assert len(output_tensors) == 1, 'invalid output tensor number.'
 
-    num_classes = output_tensors[0].shape[-1]
+    # check if output layout is NHWC or NCHW, (H,W) for Deeplab
+    # output tensor should be same as input tensor
+    if output_tensors[0].shape[-1] == width:
+        print("NCHW output layout")
+        num_classes = output_tensors[0].shape[1]  #NCHW
+    elif output_tensors[0].shape[1] == height:
+        print("NHWC output layout")
+        num_classes = output_tensors[0].shape[-1]  #NHWC
+    else:
+        raise ValueError('invalid output layout or shape')
+
     if class_names:
         # check if classes number match with model prediction
         assert num_classes == len(class_names), 'classes number mismatch with model.'
@@ -99,18 +109,31 @@ def validate_deeplab_model_onnx(model, image_file, class_names, do_crf, label_fi
     end = time.time()
     print("Average Inference time: {:.8f}ms".format((end - start) * 1000 /loop_count))
 
+    if output_tensors[0].shape[1] == num_classes:
+        # transpose predict mask for NCHW layout
+        prediction = [p.transpose((0,2,3,1)) for p in prediction]
+
     handle_prediction(prediction, image, np.array(img), image_file, num_classes, class_names, model_input_shape, origin_image_size, do_crf, label_file, output_path)
 
 
 def validate_deeplab_model_mnn(interpreter, session, image_file, class_names, do_crf, label_file, loop_count, output_path):
     # assume only 1 input tensor for image
     input_tensor = interpreter.getSessionInput(session)
-    # get input shape
-    input_shape = input_tensor.getShape()
-    if input_tensor.getDimensionType() == MNN.Tensor_DimensionType_Tensorflow:
-        batch, height, width, channel = input_shape
-    elif input_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe:
-        batch, channel, height, width = input_shape
+
+    # get & resize input shape
+    input_shape = list(input_tensor.getShape())
+    if input_shape[0] == 0:
+        input_shape[0] = 1
+        interpreter.resizeTensor(input_tensor, tuple(input_shape))
+        interpreter.resizeSession(session)
+
+    # check if input layout is NHWC or NCHW
+    if input_shape[1] == 3:
+        print("NCHW input layout")
+        batch, channel, height, width = input_shape  #NCHW
+    elif input_shape[-1] == 3:
+        print("NHWC input layout")
+        batch, height, width, channel = input_shape  #NHWC
     else:
         # should be MNN.Tensor_DimensionType_Caffe_C4, unsupported now
         raise ValueError('unsupported input tensor dimension type')
@@ -149,7 +172,19 @@ def validate_deeplab_model_mnn(interpreter, session, image_file, class_names, do
     output_shape = output_tensor.getShape()
     output_elementsize = reduce(mul, output_shape)
 
-    num_classes = output_shape[-1]
+    # check if output layout is NHWC or NCHW, (H,W) for Deeplab
+    # output tensor should be same as input tensor
+    if output_shape[2] == height:
+        print("NCHW output layout")
+        out_batch, out_channel, out_height, out_width = output_shape
+        num_classes = output_shape[1]  #NCHW
+    elif output_shape[1] == height:
+        print("NHWC output layout")
+        out_batch, out_height, out_width, out_channel = output_shape  #NHWC
+        num_classes = output_shape[-1]  #NHWC
+    else:
+        raise ValueError('invalid output layout or shape')
+
     if class_names:
         # check if classes number match with model prediction
         assert num_classes == len(class_names), 'classes number mismatch with model.'
@@ -166,7 +201,7 @@ def validate_deeplab_model_mnn(interpreter, session, image_file, class_names, do
     output_data = np.array(tmp_output.getData(), dtype=float).reshape(output_shape)
     # our postprocess code based on TF NHWC layout, so if the output format
     # doesn't match, we need to transpose
-    if output_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe:
+    if output_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe and output_shape[-1] == width: # double check if it's NCHW format
         output_data = output_data.transpose((0,2,3,1))
     elif output_tensor.getDimensionType() == MNN.Tensor_DimensionType_Caffe_C4:
         raise ValueError('unsupported output tensor dimension type')

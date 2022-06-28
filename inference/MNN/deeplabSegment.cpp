@@ -254,9 +254,6 @@ void RunInference(Settings* s) {
     config.backendConfig = &bnconfig;
 
     auto session = net->createSession(config);
-    // since we don't need to create other sessions any more,
-    // just release model data to save memory
-    net->releaseModel();
 
     // get classes labels
     std::vector<std::string> classes;
@@ -275,7 +272,7 @@ void RunInference(Settings* s) {
     int input_width = image_input->width();
     int input_height = image_input->height();
     int input_channel = image_input->channel();
-    int input_dim_type = image_input->getDimensionType();
+    auto input_dim_type = image_input->getDimensionType();
 
     std::vector<std::string> dim_type_string = {"TENSORFLOW", "CAFFE", "CAFFE_C4"};
 
@@ -283,12 +280,16 @@ void RunInference(Settings* s) {
 
     // assume input tensor is Tensorflow format, NHWC
     // to align with the input image format
-    MNN_ASSERT(input_dim_type == Tensor::TENSORFLOW);
+    //MNN_ASSERT(input_dim_type == Tensor::TENSORFLOW);
 
-    //auto shape = image_input->shape();
-    //shape[0] = 1;
-    //net->resizeTensor(image_input, shape);
-    //net->resizeSession(session);
+    auto shape = image_input->shape();
+    shape[0] = 1;
+    net->resizeTensor(image_input, shape);
+    net->resizeSession(session);
+
+    // since we don't need to create other sessions any more,
+    // just release model data to save memory
+    net->releaseModel();
 
     // load input image
     auto inputPath = s->input_img_name.c_str();
@@ -346,18 +347,18 @@ void RunInference(Settings* s) {
     int mask_width = mask_output->width();
     int mask_height = mask_output->height();
     int mask_channel = mask_output->channel();
-    MNN_PRINT("output tensor: name:%s, width:%d, height:%d, channel: %d\n", outputs.begin()->first.c_str(), mask_width, mask_height, mask_channel);
+    auto mask_dim_type = mask_output->getDimensionType();
+    MNN_PRINT("output tensor: name:%s, width:%d, height:%d, channel:%d, dim_type:%s\n", outputs.begin()->first.c_str(), mask_width, mask_height, mask_channel, dim_type_string[mask_dim_type].c_str());
 
     // check if predict mask channel number
     // matches classes definition
     MNN_ASSERT(num_classes == mask_channel);
 
     // Copy output tensors to host, for further postprocess
-    auto dim_type = mask_output->getDimensionType();
     if (mask_output->getType().code != halide_type_float) {
-        dim_type = Tensor::TENSORFLOW;
+        mask_dim_type = Tensor::TENSORFLOW;
     }
-    std::shared_ptr<Tensor> output_tensor(new Tensor(mask_output, dim_type));
+    std::shared_ptr<Tensor> output_tensor(new Tensor(mask_output, mask_dim_type));
     mask_output->copyToHostTensor(output_tensor.get());
 
     // Now we only support float32 type output tensor
