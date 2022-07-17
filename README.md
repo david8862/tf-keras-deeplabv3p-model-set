@@ -9,6 +9,7 @@ An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement w
 - [x] ResNet50
 - [x] MobileNetV2
 - [x] MobileNetV3(Large/Small)
+- [x] MobileViT(S/XS/XXS) ([paper](https://arxiv.org/abs/2110.02178))
 - [x] PeleeNet([paper](https://arxiv.org/abs/1804.06882))
 - [x] GhostNet([paper](https://arxiv.org/abs/1911.11907))
 
@@ -270,7 +271,7 @@ We' better to dump out inference model from training checkpoint for eval or demo
 # python deeplab.py --model_type=mobilenetv2_lite --weights_path=logs/000/<checkpoint>.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --dump_model --output_model_file=model.h5
 ```
 
-Change model_type, input shape & output stride to get different inference model. If "--model_pruning" was added in training, you also need to use "--pruning_model" here for dumping out the pruned model.
+Change model_type, input shape & output stride to get different inference model. If `--model_pruning` was added in training, you also need to use `--pruning_model` here for dumping out the pruned model.
 
 NOTE: One trained model could be dump out for different input shape & output stride (of course with different accuracy performance).
 
@@ -289,7 +290,7 @@ It will also draw confusion matrix chart and IOU result for each class under "re
 # python eval.py --model_path=model.h5 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/val.txt --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --save_result
 ```
 
-If you enable "--eval_online" option in train.py, evaluation on validation dataset will be executed during training. But that may cost more time for train process.
+If you enable `--eval_online` option in train.py, evaluation on validation dataset will be executed during training. But that may cost more time for train process.
 
 
 Following is a sample result trained on MobilenetV2_Lite model with VOC2012+SBD dataset:
@@ -325,7 +326,7 @@ video inference mode
 ```
 # python deeplab.py --model_type=mobilenetv2_lite --weights_path=model.h5 --classes_path=configs/voc_classes.txt --model_input_shape=512x512 --output_stride=16 --input=test.mp4
 ```
-For video detection mode, you can use "input=0" to capture live video from web camera and "output=<video name>" to dump out inference result to another video
+For video detection mode, you can use `--input=0` to capture live video from web camera and `--output=<video name>` to dump out inference result to another video
 
 ### Tensorflow model convert
 Using [keras_to_tensorflow.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/tools/model_converter/keras_to_tensorflow.py) to convert the tf.keras .h5 model to tensorflow frozen pb model:
@@ -345,6 +346,7 @@ Using [keras_to_onnx.py](https://github.com/david8862/tf-keras-deeplabv3p-model-
     --output_file="path/to/save/model.onnx"
     --op_set=11
 ```
+by default, the converted ONNX model follows TF NHWC layout. You can also use `--inputs_as_nchw` to convert input layout to NCHW, and use [onnx_edit.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/tree/master/tools/model_converter/onnx_edit.py) to edit generated ONNX model to convert output layout to NCHW.
 
 You can also use [eval.py](https://github.com/david8862/tf-keras-deeplabv3p-model-set/blob/master/eval.py) to do evaluation on the pb & onnx inference model
 

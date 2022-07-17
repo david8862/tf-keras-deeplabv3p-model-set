@@ -10,6 +10,7 @@ from tensorflow.keras.models import Model
 from deeplabv3p.models.deeplabv3p_xception import Deeplabv3pXception
 from deeplabv3p.models.deeplabv3p_mobilenetv2 import Deeplabv3pMobileNetV2, Deeplabv3pLiteMobileNetV2
 from deeplabv3p.models.deeplabv3p_mobilenetv3 import Deeplabv3pMobileNetV3Large, Deeplabv3pLiteMobileNetV3Large, Deeplabv3pMobileNetV3Small, Deeplabv3pLiteMobileNetV3Small
+from deeplabv3p.models.deeplabv3p_mobilevit import Deeplabv3pMobileViT_S, Deeplabv3pLiteMobileViT_S, Deeplabv3pMobileViT_XS, Deeplabv3pLiteMobileViT_XS, Deeplabv3pMobileViT_XXS, Deeplabv3pLiteMobileViT_XXS
 from deeplabv3p.models.deeplabv3p_peleenet import Deeplabv3pPeleeNet, Deeplabv3pLitePeleeNet
 from deeplabv3p.models.deeplabv3p_ghostnet import Deeplabv3pGhostNet, Deeplabv3pLiteGhostNet
 from deeplabv3p.models.deeplabv3p_resnet50 import Deeplabv3pResNet50
@@ -30,6 +31,13 @@ deeplab_model_map = {
 
     'peleenet': Deeplabv3pPeleeNet,
     'peleenet_lite': Deeplabv3pLitePeleeNet,
+
+    'mobilevit_s': Deeplabv3pMobileViT_S,
+    'mobilevit_s_lite': Deeplabv3pLiteMobileViT_S,
+    'mobilevit_xs': Deeplabv3pMobileViT_XS,
+    'mobilevit_xs_lite': Deeplabv3pLiteMobileViT_XS,
+    'mobilevit_xxs': Deeplabv3pMobileViT_XXS,
+    'mobilevit_xxs_lite': Deeplabv3pLiteMobileViT_XXS,
 
     'ghostnet': Deeplabv3pGhostNet,
     'ghostnet_lite': Deeplabv3pLiteGhostNet,
