@@ -2,7 +2,7 @@
 
 ## Introduction
 
-An end-to-end semantic segmentation pipeline with DeepLabv3+ models. Implement with tf.keras, including data collection/annotation, model training/tuning, model evaluation and on device deployment. Support different backbones and different head architecture:
+An end-to-end DeepLabv3+ semantic segmentation pipeline inherited from [keras-deeplab-v3-plus](https://github.com/bonlime/keras-deeplab-v3-plus) and [Keras-segmentation-deeplab-v3.1](https://github.com/Golbstein/Keras-segmentation-deeplab-v3.1). Implement with tf.keras, including data collection/annotation, model training/tuning, model evaluation and on device deployment. Support different backbones and different head architecture:
 
 #### Backbone
 - [x] Xception
