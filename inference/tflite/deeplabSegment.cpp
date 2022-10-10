@@ -159,7 +159,7 @@ uint8_t* mask_resize(uint8_t* input_mask, int mask_width, int mask_height, int t
 }
 
 
-template <class T>
+template <typename T>
 void fill_data(T* out, uint8_t* in, int input_width, int input_height,
             int input_channels, Settings* s) {
   auto output_number_of_pixels = input_height * input_width * input_channels;
@@ -305,11 +305,11 @@ void RunInference(Settings* s) {
   const std::vector<int> outputs = interpreter->outputs();
   assert(outputs.size() == 1);
 
-  // Now we only support float32 type output tensor
-  assert(mask_output->type == kTfLiteFloat32);
-
   int output = interpreter->outputs()[0];
   TfLiteTensor* mask_output = interpreter->tensor(output);
+
+  // Now we only support float32 type output tensor
+  assert(mask_output->type == kTfLiteFloat32);
 
   TfLiteIntArray* output_dims = mask_output->dims;
   int mask_batch = output_dims->data[0];

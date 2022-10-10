@@ -220,7 +220,7 @@ uint8_t* mask_resize(uint8_t* input_mask, int mask_width, int mask_height, int t
 }
 
 
-template <class T>
+template <typename T>
 void fill_data(T* out, uint8_t* in, int input_width, int input_height,
             int input_channels, Settings* s) {
   auto output_number_of_pixels = input_height * input_width * input_channels;
