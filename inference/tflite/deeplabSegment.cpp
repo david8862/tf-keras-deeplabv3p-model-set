@@ -229,14 +229,37 @@ void RunInference(Settings* s) {
   // get input dimension from the input tensor metadata
   int input = interpreter->inputs()[0];
   TfLiteIntArray* dims = interpreter->tensor(input)->dims;
+  // check input dimension
+  assert(dims->size == 4);
+
   int input_batch = dims->data[0];
   int input_height = dims->data[1];
   int input_width = dims->data[2];
   int input_channels = dims->data[3];
 
+  std::vector<std::string> tensor_type_string = {"kTfLiteNoType",
+                                                 "kTfLiteFloat32",
+                                                 "kTfLiteInt32",
+                                                 "kTfLiteUInt8",
+                                                 "kTfLiteInt64",
+                                                 "kTfLiteString",
+                                                 "kTfLiteBool",
+                                                 "kTfLiteInt16",
+                                                 "kTfLiteComplex64",
+                                                 "kTfLiteInt8",
+                                                 "kTfLiteFloat16",
+                                                 "kTfLiteFloat64",
+                                                 "kTfLiteComplex128",
+                                                 "kTfLiteUInt64",
+                                                 "kTfLiteResource",
+                                                 "kTfLiteVariant",
+                                                 "kTfLiteUInt32"
+                                                };
+
   if (s->verbose) LOG(INFO) << "input tensor info: "
                             << "name " << interpreter->tensor(input)->name << ", "
-                            << "type " << interpreter->tensor(input)->type << ", "
+                            << "type " << tensor_type_string[interpreter->tensor(input)->type] << ", "
+                            << "dim_size " << interpreter->tensor(input)->dims->size << ", "
                             << "batch " << input_batch << ", "
                             << "height " << input_height << ", "
                             << "width " << input_width << ", "
@@ -312,18 +335,22 @@ void RunInference(Settings* s) {
   assert(mask_output->type == kTfLiteFloat32);
 
   TfLiteIntArray* output_dims = mask_output->dims;
+  // check output dimension
+  assert(output_dims->size == 4);
+
   int mask_batch = output_dims->data[0];
   int mask_height = output_dims->data[1];
   int mask_width = output_dims->data[2];
   int mask_channels = output_dims->data[3];
 
   if (s->verbose) LOG(INFO) << "output tensor info: "
-      << "name " << mask_output->name << ", "
-          << "type " << mask_output->type << ", "
-          << "batch " << mask_batch << ", "
-          << "height " << mask_height << ", "
-          << "width " << mask_width << ", "
-          << "channels " << mask_channels << "\n";
+                            << "name " << mask_output->name << ", "
+                            << "type " << tensor_type_string[mask_output->type] << ", "
+                            << "dim_size " << mask_output->dims->size << ", "
+                            << "batch " << mask_batch << ", "
+                            << "height " << mask_height << ", "
+                            << "width " << mask_width << ", "
+                            << "channels " << mask_channels << "\n";
 
   // check if predict mask channel number
   // matches classes definition

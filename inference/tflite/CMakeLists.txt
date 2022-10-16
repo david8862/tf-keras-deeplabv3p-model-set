@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(deeplabSegment LANGUAGES CXX)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-#SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_BUILD_TYPE "Debug")
+#SET(CMAKE_BUILD_TYPE "Release")
 
 #### specify the build flag
 SET(CMAKE_CXX_FLAGS  "-std=c++14 -O2")

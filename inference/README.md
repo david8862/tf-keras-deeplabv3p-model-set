@@ -165,6 +165,19 @@ We can do either native compile for X86 or cross-compile for ARM
 # ./tensorflow/lite/tools/make/build_rpi_lib.sh #for ARM cross compile, e.g Rasperberry Pi
 ```
 
+you can also create your own build script for new ARM platform, like:
+
+```shell
+# vim ./tensorflow/lite/tools/make/build_my_arm_lib.sh
+
+#!/bin/bash -x
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/../../../.."
+make CC_PREFIX=/root/toolchain/aarch64-linux-gnu/bin/aarch64-linux-gnu- -j 3 -f tensorflow/lite/tools/make/Makefile TARGET=myarm TARGET_ARCH=aarch64 $@
+```
+
+
 **NOTE:**
 * Using Makefile to build TensorFlow Lite is deprecated since Aug 2021. So v2.6.0 should be the last major version to support Makefile build (cmake is enabled on new version)
 * by default TF-Lite build only generate static lib (.a), but we can do minor change in Makefile to generate .so shared lib together, as follow:

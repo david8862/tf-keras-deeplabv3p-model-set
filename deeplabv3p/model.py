@@ -6,6 +6,7 @@ create deeplabv3p models
 from functools import partial
 from tensorflow.keras.layers import Conv2D, Reshape, Activation, Softmax, Lambda, Input
 from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
 
 from deeplabv3p.models.deeplabv3p_xception import Deeplabv3pXception
 from deeplabv3p.models.deeplabv3p_mobilenetv2 import Deeplabv3pMobileNetV2, Deeplabv3pLiteMobileNetV2
@@ -78,7 +79,16 @@ def get_deeplabv3p_model(model_type, num_classes, model_input_shape, output_stri
     if training:
         x = Reshape((model_input_shape[0]*model_input_shape[1], num_classes)) (x)
 
+    # NOTE: if you want to merge "argmax" postprocess into model,
+    #       just switch to following comment code when dumping out
+    #       inference model, and remove the np.argmax() action in
+    #       postprocess
     x = Softmax(name='pred_mask')(x)
+
+    #x = Softmax(name='pred_softmax')(x)
+    #if not training:
+        #x = Lambda(lambda x: K.argmax(x, axis=-1), name='pred_mask')(x)
+
     model = Model(base_model.input, x, name='deeplabv3p_'+model_type)
 
     #if use_subpixel:
