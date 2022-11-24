@@ -6,7 +6,6 @@ Train the deeplabv3p model for your own dataset.
 import os, sys, argparse, time
 import warnings
 import tensorflow.keras.backend as K
-from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping, TerminateOnNaN
 
 from deeplabv3p.model import get_deeplabv3p_model
