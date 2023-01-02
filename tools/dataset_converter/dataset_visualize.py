@@ -4,7 +4,6 @@ import os, sys, argparse
 import numpy as np
 import cv2
 from PIL import Image
-from tqdm import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 from common.utils import get_classes, get_data_list, visualize_segmentation
@@ -21,10 +20,12 @@ def dataset_visualize(dataset_path, dataset_file, classes_path):
     dataset_realpath = os.path.realpath(dataset_path)
     image_path_list = [os.path.join(dataset_realpath, 'images', image_id.strip()+'.jpg') for image_id in dataset_list]
     label_path_list = [os.path.join(dataset_realpath, 'labels', image_id.strip()+'.png') for image_id in dataset_list]
+    dataset_list = list(zip(image_path_list, label_path_list))
+    print('number of samples:', len(dataset_list))
 
-    pbar = tqdm(total=len(image_path_list), desc='Visualize dataset')
-    for i, (image_path, label_path) in enumerate(zip(image_path_list, label_path_list)):
-        pbar.update(1)
+    i=0
+    while i < len(dataset_list):
+        image_path, label_path = dataset_list[i]
 
         # Load image and label array
         img = Image.open(image_path).convert('RGB')
@@ -53,12 +54,33 @@ def dataset_visualize(dataset_path, dataset_file, classes_path):
         # convert to BGR for display
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        cv2.namedWindow("Image", 0)
-        cv2.imshow("Image", image)
+
+        try:
+            cv2.namedWindow("Dataset visualize f: forward; b: back; q: quit", 0)
+            cv2.imshow("Dataset visualize f: forward; b: back; q: quit", image)
+        except Exception as e:
+            #print(repr(e))
+            print('invalid image', image_path)
+            try:
+                cv2.getWindowProperty('image',cv2.WND_PROP_VISIBLE)
+            except Exception as e:
+                print('No valid window yet, try next image')
+                i = i + 1
+
         keycode = cv2.waitKey(0) & 0xFF
-        if keycode == ord('q') or keycode == 27: # 27 is keycode for Esc
-            break
-    pbar.close()
+        if keycode == ord('f'):
+            #print('forward to next image')
+            if i < len(dataset_list) - 1:
+                i = i + 1
+        elif keycode == ord('b'):
+            #print('back to previous image')
+            if i > 0:
+                i = i - 1
+        elif keycode == ord('q') or keycode == 27: # 27 is keycode for Esc
+            print('exit')
+            exit()
+        else:
+            print('unsupport key')
 
 
 
