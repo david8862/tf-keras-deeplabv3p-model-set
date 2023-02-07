@@ -205,20 +205,20 @@ def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion m
     trained_classes = classes
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title,fontsize=11)
+    plt.title(title, fontsize=11)
     tick_marks = np.arange(len(classes))
-    plt.xticks(np.arange(len(trained_classes)), classes, rotation=90,fontsize=9)
-    plt.yticks(tick_marks, classes,fontsize=9)
+    plt.xticks(np.arange(len(trained_classes)), classes, rotation=90, fontsize=9)
+    plt.yticks(tick_marks, classes, fontsize=9)
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, np.round(cm[i, j],2), horizontalalignment="center", color="white" if cm[i, j] > thresh else "black", fontsize=7)
-    plt.tight_layout()
-    plt.ylabel('True label',fontsize=9)
-    plt.xlabel('Predicted label',fontsize=9)
+        plt.text(j, i, np.round(cm[i, j], 2), horizontalalignment="center", color="white" if cm[i, j] > thresh else "black", fontsize=7)
+    plt.ylabel('True label', fontsize=9)
+    plt.xlabel('Predicted label', fontsize=9)
 
-    plt.title('Mean IOU: '+ str(np.round(mIOU*100, 2)))
-    output_path = os.path.join('result','confusion_matrix.png')
+    plt.title('Mean IOU: ' + str(np.round(mIOU*100, 2)))
+    output_path = os.path.join('result', 'confusion_matrix.png')
     os.makedirs('result', exist_ok=True)
+    plt.tight_layout()
     plt.savefig(output_path)
     #plt.show()
 
@@ -401,7 +401,7 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
             y_pred = deeplab_predict_tflite(model, image_data)
         # support of MNN model
         elif model_format == 'MNN':
-            y_pred =deeplab_predict_mnn(model, session, image_data)
+            y_pred = deeplab_predict_mnn(model, session, image_data)
         # support of TF 1.x frozen pb model
         elif model_format == 'PB':
             y_pred = deeplab_predict_pb(model, image_data)

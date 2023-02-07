@@ -17,9 +17,11 @@ import tensorflow as tf
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 from common.data_utils import preprocess_image, denormalize_image, mask_resize
-from common.utils import get_custom_objects, get_classes, visualize_segmentation
+from common.utils import get_custom_objects, get_classes, optimize_tf_gpu, visualize_segmentation
 from deeplabv3p.metrics import mIOU
 from deeplabv3p.postprocess_np import crf_postprocess
+
+optimize_tf_gpu(tf, K)
 
 
 def validate_deeplab_model(model, image_file, class_names, model_input_shape, do_crf, label_file, loop_count, output_path):
