@@ -119,7 +119,8 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
           if i == (len(sorted_values)-1): # largest bar
               adjust_axes(r, t, fig, axes)
     # set window title
-    fig.canvas.set_window_title(window_title)
+    if fig.canvas.manager is not None:
+        fig.canvas.manager.set_window_title(window_title)
     # write classes in y axis
     tick_font_size = 12
     plt.yticks(range(n_classes), sorted_keys, fontsize=tick_font_size)

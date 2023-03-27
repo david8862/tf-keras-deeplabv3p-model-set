@@ -205,7 +205,6 @@ def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion m
     trained_classes = classes
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title, fontsize=11)
     tick_marks = np.arange(len(classes))
     plt.xticks(np.arange(len(trained_classes)), classes, rotation=90, fontsize=9)
     plt.yticks(tick_marks, classes, fontsize=9)
@@ -215,7 +214,7 @@ def plot_confusion_matrix(cm, classes, mIOU, normalize=False, title='Confusion m
     plt.ylabel('True label', fontsize=9)
     plt.xlabel('Predicted label', fontsize=9)
 
-    plt.title('Mean IOU: ' + str(np.round(mIOU*100, 2)))
+    plt.title(title + '\nMean IOU: ' + str(np.round(mIOU*100, 2)))
     output_path = os.path.join('result', 'confusion_matrix.png')
     os.makedirs('result', exist_ok=True)
     plt.tight_layout()
@@ -299,7 +298,8 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
           if i == (len(sorted_values)-1): # largest bar
               adjust_axes(r, t, fig, axes)
     # set window title
-    fig.canvas.set_window_title(window_title)
+    if fig.canvas.manager is not None:
+        fig.canvas.manager.set_window_title(window_title)
     # write classes in y axis
     tick_font_size = 12
     plt.yticks(range(n_classes), sorted_keys, fontsize=tick_font_size)
@@ -387,7 +387,13 @@ def eval_mIOU(model, model_format, dataset_path, dataset, class_names, model_inp
 
     if model_format == 'MNN':
         #MNN inference engine need create session
-        session = model.createSession()
+        session_config = \
+        {
+          'backend': 'CPU',  #'CPU'/'OPENCL'/'OPENGL'/'VULKAN'/'METAL'/'TRT'/'CUDA'/'HIAI'
+          'precision': 'high',  #'normal'/'low'/'high'/'lowBF'
+          'numThread': 2
+        }
+        session = model.createSession(session_config)
 
     # confusion matrix for all classes
     confusion_matrix = np.zeros((num_classes, num_classes), dtype=float)
