@@ -25,7 +25,7 @@ def get_unet_model(model_type, num_classes, model_input_shape, freeze_level=0, w
 
     model_function = unet_model_map[model_type]
 
-    input_tensor = Input(shape=model_input_shape + (3,), name='image_input')
+    input_tensor = Input(shape=model_input_shape+(3,), batch_size=None, name='image_input')
     base_model = model_function(num_classes, input_tensor=input_tensor,
                            input_shape=model_input_shape + (3,),
                            weights=None)

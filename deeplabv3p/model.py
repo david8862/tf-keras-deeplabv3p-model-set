@@ -55,7 +55,7 @@ def get_deeplabv3p_model(model_type, num_classes, model_input_shape, output_stri
 
     model_function = deeplab_model_map[model_type]
 
-    input_tensor = Input(shape=model_input_shape + (3,), name='image_input')
+    input_tensor = Input(shape=model_input_shape+(3,), batch_size=None, name='image_input')
     model, backbone_len = model_function(input_tensor=input_tensor,
                                          input_shape=model_input_shape + (3,),
                                          #weights='imagenet',
