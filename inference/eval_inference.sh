@@ -29,8 +29,8 @@ do
     let percent=i*100/IMAGE_NUM
     let num=percent/2
     bar=$(seq -s "#" $num | tr -d "[:digit:]")
-+    #printf "inference process: %d/%d [%c]\r" "$i" "$IMAGE_NUM" "${ICON_ARRAY[$index]}"
-+    printf "inference process: %d/%d [%-50s] %d%% \r" "$i" "$IMAGE_NUM" "$bar" "$percent"
+    #printf "inference process: %d/%d [%c]\r" "$i" "$IMAGE_NUM" "${ICON_ARRAY[$index]}"
+    printf "inference process: %d/%d [%-50s] %d%% \r" "$i" "$IMAGE_NUM" "$bar" "$percent"
     let i=i+1
 done
 printf "\nDone\n"
