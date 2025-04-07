@@ -64,10 +64,10 @@ def draw_label(image, text, color, coords):
 
 def voc_visualize(args):
     image_ids = open(args.dataset_file).read().strip().split()
-	
-	# create output path
+
+    # create output path
     os.makedirs(args.output_path, exist_ok=True)
-	
+
     pbar = tqdm(total=len(image_ids), desc='Visual image')
     for image_id in image_ids:
         pbar.update(1)

@@ -1,8 +1,10 @@
 #!/bin/bash
 #
 
-# Cityscapes dataset, 12GB
-#echo "Downloading ADE20K dataset..."
+# Cityscapes dataset, 12GB. Could be download from:
+# https://blog.csdn.net/zym19941119/article/details/81198315
+#
+#echo "Downloading Cityscapes dataset..."
 #wget -O Cityscapes.zip http://xxx.com/Cityscapes.zip
 
 # extract data
