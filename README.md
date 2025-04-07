@@ -253,6 +253,10 @@ Following is a reference config cmd for training mobilenetv2 lite model on Pasca
 ```
 # python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --classes_path=configs/voc_classes.txt --batch_size=16 --freeze_level=1 --transfer_epoch=5 --total_epoch=150 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
 ```
+or training on GPU 0, 1 and 2, if you have several GPUs on your host/server:
+```
+# CUDA_VISIBLE_DEVICES=0,1,2 python train.py --model_type=mobilenetv2_lite --output_stride=16 --dataset_path=VOC2012/ --dataset_file=VOC2012/ImageSets/Segmentation/train.txt --val_dataset_file=VOC2012/ImageSets/Segmentation/val.txt --classes_path=configs/voc_classes.txt --batch_size=16 --freeze_level=1 --transfer_epoch=5 --total_epoch=150 --eval_online --eval_epoch_interval=1 --save_eval_checkpoint --weighted_type=adaptive
+```
 
 Checkpoints during training could be found at `logs/000/`. Choose a best one as result
 
