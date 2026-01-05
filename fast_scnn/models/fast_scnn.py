@@ -154,7 +154,11 @@ def FastSCNN(num_classes,
 
 
 if __name__ == '__main__':
-    from tensorflow.keras.optimizers import SGD
+    # try to use legecy optimizer if possible
+    try:
+        from tensorflow.keras.optimizers.legacy import SGD
+    except:
+        from tensorflow.keras.optimizers import SGD
 
     #input_tensor = Input(shape=(2048, 1024, 3), name='image_input')
     input_tensor = Input(shape=(512, 512, 3), name='image_input')

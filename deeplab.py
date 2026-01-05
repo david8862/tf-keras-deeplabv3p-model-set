@@ -94,7 +94,7 @@ class DeepLab(object):
 
 
     def predict(self, image_data, image_shape):
-        prediction = self.deeplab_model.predict([image_data])
+        prediction = self.deeplab_model.predict([image_data], verbose=0)
         # reshape prediction to mask array
         mask = np.argmax(prediction, -1)[0].reshape(self.model_input_shape)
 

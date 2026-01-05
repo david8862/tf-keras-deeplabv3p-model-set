@@ -9,7 +9,8 @@ mv VOCdevkit/VOC2012 VOC2012_orig && rm -r VOCdevkit
 
 # augmented PASCAL VOC, 1.3 GB
 echo "Downloading SBD dataset..."
-wget http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
+#wget http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
+wget https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
 tar xvf benchmark.tgz
 mv benchmark_RELEASE VOC_aug
 

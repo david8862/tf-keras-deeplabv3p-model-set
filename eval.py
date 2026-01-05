@@ -12,7 +12,6 @@ import itertools
 from tqdm import tqdm
 from collections import OrderedDict
 import operator
-from labelme.utils import lblsave as label_save
 
 from tensorflow.keras.models import load_model
 import tensorflow.keras.backend as K
@@ -32,7 +31,7 @@ optimize_tf_gpu(tf, K)
 
 
 def deeplab_predict_keras(model, image_data):
-    prediction = model.predict(image_data)
+    prediction = model.predict(image_data, verbose=0)
     prediction = np.argmax(prediction, axis=-1)
     return prediction[0]
 
@@ -349,6 +348,7 @@ def plot_mIOU_result(IOUs, mIOU, num_classes):
 
 def save_seg_result(image, pred_mask, gt_mask, image_id, class_names):
     # save predict mask as PNG image
+    from labelme.utils import lblsave as label_save
     mask_dir = os.path.join('result','predict_mask')
     os.makedirs(mask_dir, exist_ok=True)
     label_save(os.path.join(mask_dir, str(image_id)+'.png'), pred_mask)

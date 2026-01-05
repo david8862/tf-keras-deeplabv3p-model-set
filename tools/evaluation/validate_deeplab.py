@@ -38,12 +38,12 @@ def validate_deeplab_model(model, image_file, class_names, model_input_shape, do
     origin_image_size = img.size
 
     # predict once first to bypass the model building time
-    model.predict([image_data])
+    model.predict([image_data], verbose=0)
 
     # get predict output
     start = time.time()
     for i in range(loop_count):
-        prediction = model.predict([image_data])
+        prediction = model.predict([image_data], verbose=0)
     end = time.time()
     print("Average Inference time: {:.8f}ms".format((end - start) * 1000 /loop_count))
 
