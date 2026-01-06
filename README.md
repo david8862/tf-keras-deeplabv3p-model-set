@@ -44,9 +44,10 @@ An end-to-end DeepLabv3+ semantic segmentation pipeline inherited from [keras-de
 
 ## Quick Start
 
-1. Install requirements on Ubuntu 16.04/18.04:
+1. Install requirements on Ubuntu 22.04/24.04 (with Python 3.10):
 
 ```
+# apt install imagemagick
 # pip install -r requirements.txt
 ```
 
